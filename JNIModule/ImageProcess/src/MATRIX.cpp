@@ -18,6 +18,26 @@ MATRIX2::MATRIX2(int width, int height, float value)
   }
 }
 
+MATRIX2 MATRIX2::subset(int x,int y,int width,int height)
+{
+  MATRIX2 re(width,height);
+  int cur=0;
+  for(int i=0;i<height;i++)
+  {
+    for(int j=0;j<width;j++)
+    {
+      *(re.data()+cur)=this->get(x+j,y+i);
+      cur++;
+    }
+  }
+  return re;
+}
+
+float* MATRIX2::data()
+{
+  return this->m_map;
+}
+
 MATRIX2::MATRIX2(int width, int height)
 {
   new (this) MATRIX2(width,height,0.0f);
@@ -167,6 +187,24 @@ void MATRIX2::print()
   }
 }
 
+void MATRIX2::add(float value)
+{
+  int n = this->width*this->height;
+  for(int i=0;i<n;i++)
+  {
+    *(this->m_map+i) = *(this->m_map+i)+value;
+  }
+}
+
+void MATRIX2::mul(float value)
+{
+  int n = this->width*this->height;
+  for(int i=0;i<n;i++)
+  {
+    *(this->m_map+i) = *(this->m_map+i)*value;
+  }
+}
+
 void MATRIX2::filter(float (*filter)(int,int,float))
 {
   for(int i=0;i<this->height;i++)
@@ -209,7 +247,10 @@ float MATRIX2::max()
   for(int i=0;i<n;i++)
   {
     float v = *(this->m_map+i);
-    if(v>max)max = v;
+    if(v>max)
+    {
+      max = v;
+    }
   }
   return max;
 }
@@ -224,4 +265,111 @@ float MATRIX2::average()
     all+=v;
   }
   return all/n;
+}
+
+
+/////////////////////////////////////
+COMPLEX2::COMPLEX2()
+{
+  this->rl=0.0f;
+  this->im=0.0f;
+}
+COMPLEX2::COMPLEX2(float rl,float im)
+{
+  this->rl=rl;
+  this->im=im;
+}
+float COMPLEX2::modulo()
+{
+  return powf(powf(this->rl,2.0f)+powf(this->im,2.0f),0.5f);
+}
+
+void COMPLEX2::add(COMPLEX2 cop)
+{
+  this->rl+=cop.rl;
+  this->im+=cop.im;
+}
+
+void COMPLEX2::mul(COMPLEX2 cop)
+{
+  float rl=this->rl;
+  this->rl=this->rl*cop.rl-this->im*cop.im;
+  this->im=rl*cop.im+this->im*cop.rl;
+}
+
+void COMPLEX2::print()
+{
+  std::cout<<"("<<this->rl<<","<<this->im<<"i)"<<std::endl;
+}
+
+MATRIX_C2::MATRIX_C2(int width, int height)
+{
+  new (this) MATRIX_C2(width,height,COMPLEX2{0.0f,0.0f});
+}
+MATRIX_C2::MATRIX_C2(int width, int height, COMPLEX2 value)
+{
+  this->width = width;
+  this->height = height;
+  int size = width*height;
+  this->m_map = (COMPLEX2*)malloc(size*sizeof(COMPLEX2));
+  for(int i=0;i<size;i++)
+  {
+    *(this->m_map+i)=value;
+  }
+}
+
+COMPLEX2 MATRIX_C2::get(int x, int y)
+{
+  return *(this->m_map+y*this->width+x);
+}
+
+void MATRIX_C2::set(int x, int y, COMPLEX2 value)
+{
+  *(this->m_map+y*this->width+x) = value;
+}
+
+void MATRIX_C2::set_array(COMPLEX2* data)
+{
+  this->m_map = data;
+}
+
+void MATRIX_C2::print()
+{
+  for(int i=0;i<this->height;i++)
+  {
+    for(int j=0;j<this->width;j++)
+    {
+      if(j>0)std::cout<<",";
+      COMPLEX2 cop = this->get(j,i);
+      std::cout<<"("<<cop.rl<<","<<cop.im<<")";
+    }
+    std::cout<<std::endl;
+  }
+}
+
+void MATRIX_C2::add(COMPLEX2 value)
+{
+  int n = this->width*this->height;
+  for(int i=0;i<n;i++)
+  {
+    (*(this->m_map+i)).add(value);
+  }
+}
+
+COMPLEX2* MATRIX_C2::data()
+{
+  return this->m_map;
+}
+
+MATRIX2 MATRIX_C2::to_float()
+{
+  MATRIX2 re(this->width,this->height);
+  int n = re.width*re.height;
+  float* m_cur=re.data();
+  COMPLEX2* cop_cur=this->data();
+  for(int i=0;i<n;i++)
+  {
+    *(m_cur+i)=(*(cop_cur+i)).modulo();
+  }
+  return re;
 }

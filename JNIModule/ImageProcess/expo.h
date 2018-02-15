@@ -3,6 +3,39 @@
 #include "src/IMG.cpp"
 #include "src/EDGE.cpp"
 #include "src/PROCESSOR.cpp"
+#include "src/VERT.cpp"
+#include "math.h"
+
+#ifndef VERT_PROC_H
+#define VERT_PROC_H
+namespace VERT_PROC{
+  const float dTheta = 5;
+  const int n_theta = (int)(180/dTheta)+1;
+  const float D_PI = M_PI/180.0f;
+  static VERT2 direct_verts[n_theta];
+  static float direct_verts_r[n_theta];
+  void init_vert()
+  {
+    float d = -90.0f;
+    float rad;
+    for(int i=0;i<n_theta;i++)
+    {
+      rad = d*D_PI;
+      direct_verts[i]=VERT2(cosf(rad),sinf(rad));
+      direct_verts_r[i]=d;
+      d+=dTheta;
+    }
+  }
+  void func_vert(IMG_DATA image_data,int x,int y,float value)
+  {
+    float rad = value*D_PI;
+    float dx = cosf(rad)*10;
+    float dy = sinf(rad)*10;
+    if(rad!=0)IMG::draw_line(image_data,x,y,(int)(x+dx),(int)(y+dy),IMG_COLOR::GREEN);
+  }
+};
+#endif
+
 
 #ifndef MATRIX_PROC_H
 #define MATRIX_PROC_H
@@ -36,11 +69,22 @@ namespace MATRIX_PROC{
   {
     if(value > 0.0f)
     {
-      return IMG_COLOR::GREEN;
+      return IMG_COLOR::WHITE;
     }
     else{
       return IMG_COLOR::BLACK;
     }
+  }
+
+  unsigned char* func_dtf(int x,int y,float value)
+  {
+    unsigned char gray = (unsigned char)value;
+
+    unsigned char* color = new unsigned char[3];
+    color[0] = gray;
+    color[1] = gray;
+    color[2] = gray;
+    return color;
   }
 
   float filter1(int x,int y,float value)
@@ -52,6 +96,11 @@ namespace MATRIX_PROC{
     else{
       return 0.0f;
     }
+  }
+
+  float filter_DFT(int x,int y,float value)
+  {
+    return sqrtf(abs(value)+1);
   }
 }
 

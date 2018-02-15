@@ -35,8 +35,8 @@ void draw_histogram(MATRIX2 map_data,IMG_DATA image_data)
 int main(){
   long _t = get_timestamp();
   MATRIX_PROC::init_mtrx();//初始化算子矩阵
-
-  IMG_DATA jpeg_data = input_image("1.jpg");
+  VERT_PROC::init_vert();//初始化向量
+  IMG_DATA jpeg_data = input_image("2.jpg");
 
   //灰度化
   IMG_DATA jpeg_data_gray = IMG::copy_data(jpeg_data);
@@ -60,7 +60,7 @@ int main(){
   MATRIX2 f_m_m1 = map_data.conv(MATRIX_PROC::m1);
   f_m_m1.filter(MATRIX_PROC::filter1);
   PROCESSOR::draw_matrix(f_m_m1,feature_m1,MATRIX_PROC::func1);
-  draw_histogram(f_m_m1,feature_m1);
+  //draw_histogram(f_m_m1,feature_m1);
   output_image("f1.jpg",feature_m1);
 
   IMG_DATA feature_area = IMG::create(map_data.width,map_data.height);
@@ -98,6 +98,7 @@ int main(){
     }
     area_size/=2;
   }
+  //
   float min_x = f_m_area64.width;
   float max_x = 0;
   float min_y = f_m_area64.height;
@@ -107,21 +108,53 @@ int main(){
     for(int j=0;j<f_m_area64.width;j++)
     {
       if(f_m_area64.get(j,i)>0){
-        if(j<min_x)min_x=j-1;
-        if(j>max_x)max_x=j+1;
-        if(i<min_y)min_y=i-1;
-        if(i>max_y)max_y=i+1;
+        if(j<min_x)min_x=j;
+        if(j>max_x)max_x=j;
+        if(i<min_y)min_y=i;
+        if(i>max_y)max_y=i;
       }
     }
   }
-  min_x*=f_m_m1.width/f_m_area64.width;
-  max_x*=f_m_m1.width/f_m_area64.width;
-  min_y*=f_m_m1.height/f_m_area64.height;
-  max_y*=f_m_m1.height/f_m_area64.height;
-  IMG_DATA edge_proc = IMG::create(map_data.width,map_data.height);
-  PROCESSOR::draw_matrix(map_data,edge_proc,MATRIX_PROC::func_edge);
-  IMG::draw_rect(edge_proc,IMG_RECT{(int)min_x,(int)min_y,(int)max_x,(int)max_y},IMG_COLOR::WHITE);
+  max_y+=2;
+  float scale_f = f_m_m1.width/f_m_area64.width;
+  min_x*=scale_f;
+  max_x*=scale_f;
+  scale_f = f_m_m1.height/f_m_area64.height;
+  min_y*=scale_f;
+  max_y*=scale_f;
+
+  int a_width = (int)(max_x-min_x);
+  int a_height = (int)(max_y-min_y);
+
+
+  IMG_DATA edge_proc = IMG::create(a_width,a_height);
+  MATRIX2 a_map_data = map_data.subset(min_x,min_y,a_width,a_height);
+  PROCESSOR::draw_matrix(a_map_data,edge_proc,MATRIX_PROC::func_edge);
   output_image("e1.jpg",edge_proc);
+  int dtf_img_size = 128;
+  int dtf_size = 128;
+  int dtf_offset_x = 0;
+  int dtf_offset_y = 0;
+  IMG_DATA dtf_img = IMG::create(dtf_img_size,dtf_img_size);
+  MATRIX2 dtf_map_data = map_data.subset(min_x+dtf_offset_x,min_y+dtf_offset_y,dtf_img_size,dtf_img_size);
+  PROCESSOR::draw_matrix(dtf_map_data,dtf_img,MATRIX_PROC::func_edge);
+  output_image("dfto.jpg",dtf_img);
+
+  dtf_img = IMG::create(dtf_size,dtf_size);
+  dtf_map_data = map_data.subset(min_x+dtf_offset_x,min_y+dtf_offset_y,dtf_img_size,dtf_img_size);
+  MATRIX2 dtf_data = PROCESSOR::FFT2(dtf_map_data,dtf_size);
+  dtf_data.filter(MATRIX_PROC::filter_DFT);
+  //dtf_data.print();
+  float dtf_max = dtf_data.max();
+  std::cout<<dtf_max<<std::endl;
+  dtf_data.mul(1.0f/dtf_max*255.0f);
+  PROCESSOR::draw_DFT(dtf_data,dtf_img);
+  output_image("dft.jpg",dtf_img);
+  //MATRIX2 a_map_verts = PROCESSOR::vert_mark(a_map_data,7,VERT_PROC::direct_verts,VERT_PROC::direct_verts_r,VERT_PROC::n_theta);
+
+  //PROCESSOR::draw_verts(a_map_verts,edge_proc,VERT_PROC::func_vert);
+  //IMG::draw_rect(edge_proc,IMG_RECT{(int)min_x,(int)min_y,(int)max_x,(int)max_y},IMG_COLOR::WHITE);
+  
 
 
   std::cout<<f_m_area64.width<<","<<f_m_area64.height<<std::endl;
