@@ -23,6 +23,13 @@ struct MATRIX2_RECT
   int flag;
 };
 
+struct MATRIX2_INDEXF
+{
+  int x;
+  int y;
+  float value;
+};
+
 class MATRIX2{
 private:
   float* m_map;
@@ -41,7 +48,8 @@ public:
   void print();
   void filter(float (*filter)(int,int,float));
   void filter(float (*filter)(int,int,float,float*),float* params);
-  float max();
+  float maxf();
+  MATRIX2_INDEXF max(); 
   float min();
   float average();
   void add(float value);

@@ -19,5 +19,6 @@ public:
   static MATRIX2 FFT2(MATRIX2 matrix,int size);
   static MATRIX2 DFT(MATRIX2 matrix,int size);
   static void draw_DFT(MATRIX2 matrix,IMG_DATA image_data_out);
+  static MATRIX2 houghLineTrans(MATRIX2 matrix,int theltaStep,int lengthStep);//Hought Tranform
 };
 #endif

@@ -240,7 +240,7 @@ float MATRIX2::min()
   return min;
 }
 
-float MATRIX2::max()
+float MATRIX2::maxf()
 {
   float max = FLT_MIN;
   int n = this->width*this->height;
@@ -253,6 +253,27 @@ float MATRIX2::max()
     }
   }
   return max;
+}
+
+MATRIX2_INDEXF MATRIX2::max()
+{
+  MATRIX2_INDEXF index;
+  index.value = FLT_MIN;
+  int n = this->width*this->height;
+  for(int i=0;i<this->height;i++)
+  {
+    for(int j=0;j<this->width;j++)
+    {
+      float v = this->get(j,i);
+      if(v>index.value)
+      {
+        index.x=j;
+        index.y=i;
+        index.value = v;
+      }
+    }
+  }
+  return index;
 }
 
 float MATRIX2::average()

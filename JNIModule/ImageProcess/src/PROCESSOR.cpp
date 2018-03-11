@@ -374,19 +374,49 @@ MATRIX2 PROCESSOR::DFT(MATRIX2 matrix,int size)
   return rec.to_float();
 }
 
-void PROCESSOR::draw_DFT(MATRIX2 matrix,IMG_DATA image_data_out)
+float houghLineTranser(float x,float y,float thelta)
 {
+  return y*sinf(thelta)+x*cosf(thelta);
+}
+
+MATRIX2 PROCESSOR::houghLineTrans(MATRIX2 matrix,int theltaStep,int lengthStep)
+{
+  float max_length = sqrtf(matrix.height*matrix.height + matrix.width*matrix.width);
+  float max_thelta = M_PI;
+  float dl = max_length/lengthStep;
+  float dt = max_thelta/theltaStep;
+  MATRIX2 re(theltaStep,lengthStep);
   for(int i=0;i<matrix.height;i++)
   {
     for(int j=0;j<matrix.width;j++)
     {
-      unsigned char gray = (unsigned char)matrix.get(j,i);
-      //std::cout<<gray<<std::endl;
-      unsigned char color[] = {gray,gray,gray};
-      IMG::set_rgb(image_data_out,j,i,color);
+      float value = matrix.get(j,i);
+      if(value>0)
+      {
+        float thelta = 0;
+        for(int k=0;k<theltaStep;k++)
+        {
+          float r = houghLineTranser(j,i,thelta);
+          if(r>dl)
+          {
+            int indexR = (r/dl);
+            //if(abs(indexR)<lengthStep)
+            {
+              //if(indexR<0)indexR+=lengthStep;
+              re.set(k,indexR,re.get(k,indexR)+10.0f*value/255);
+            }
+            
+          }
+          
+          thelta+=dt;
+        }
+      }
     }
   }
+  return re;
 }
+
+
 /*void PROCESSOR::Blur(IMG_DATA image_data,IMG_DATA image_data_out,int r){
   
 }*/

@@ -54,7 +54,7 @@ namespace MATRIX_PROC{
 
     std::cout<<"Init Matrix Completed."<<std::endl;
   }
-  unsigned char* func1(int x,int y,float value)
+  unsigned char* dFunc_words(int x,int y,float value)
   {
     if(value > 0.0f)
     {
@@ -65,7 +65,7 @@ namespace MATRIX_PROC{
     }
   }
 
-  unsigned char* func_edge(int x,int y,float value)
+  unsigned char* dFunc_binary(int x,int y,float value)
   {
     if(value > 0.0f)
     {
@@ -76,7 +76,7 @@ namespace MATRIX_PROC{
     }
   }
 
-  unsigned char* func_dtf(int x,int y,float value)
+  unsigned char* dFunc_gray(int x,int y,float value)
   {
     unsigned char gray = (unsigned char)value;
 
@@ -87,7 +87,7 @@ namespace MATRIX_PROC{
     return color;
   }
 
-  float filter1(int x,int y,float value)
+  float filter_words(int x,int y,float value)
   {
     if(value > 3.0f)
     {
@@ -98,9 +98,15 @@ namespace MATRIX_PROC{
     }
   }
 
+  float mapper_DFT(int x,int y,float value)
+  {
+    float k = (abs(value)+1);
+    return k;
+  }
+
   float filter_DFT(int x,int y,float value)
   {
-    return sqrtf(abs(value)+1);
+    return (value<60)?0:255;
   }
 }
 
