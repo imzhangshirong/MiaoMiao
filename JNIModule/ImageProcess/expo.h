@@ -1,46 +1,17 @@
-#include "src/COMMON.cpp"
-#include "src/MATRIX.cpp"
-#include "src/IMG.cpp"
-#include "src/EDGE.cpp"
-#include "src/PROCESSOR.cpp"
-#include "src/VERT.cpp"
 #include "math.h"
-
-#ifndef VERT_PROC_H
-#define VERT_PROC_H
-namespace VERT_PROC{
-  const float dTheta = 5;
-  const int n_theta = (int)(180/dTheta)+1;
-  const float D_PI = M_PI/180.0f;
-  static VERT2 direct_verts[n_theta];
-  static float direct_verts_r[n_theta];
-  void init_vert()
-  {
-    float d = -90.0f;
-    float rad;
-    for(int i=0;i<n_theta;i++)
-    {
-      rad = d*D_PI;
-      direct_verts[i]=VERT2(cosf(rad),sinf(rad));
-      direct_verts_r[i]=d;
-      d+=dTheta;
-    }
-  }
-  void func_vert(IMG_DATA image_data,int x,int y,float value)
-  {
-    float rad = value*D_PI;
-    float dx = cosf(rad)*10;
-    float dy = sinf(rad)*10;
-    if(rad!=0)IMG::draw_line(image_data,x,y,(int)(x+dx),(int)(y+dy),IMG_COLOR::GREEN);
-  }
-};
-#endif
-
+#include "src/m_matrix.cpp"
+#include "src/m_complex.cpp"
+#include "src/m_matrixc.cpp"
+#include "src/m_image.cpp"
+#include "src/m_vert2.cpp"
+#include "src/m_processor.cpp"
+#include "src/EDGE.cpp"
+#include "src/COMMON.cpp"
 
 #ifndef MATRIX_PROC_H
 #define MATRIX_PROC_H
 namespace MATRIX_PROC{
-  static MATRIX2 m1(5,5);
+  static m_matrix m1(5,5);
   void init_mtrx()
   {
     static float m1_data[] = {
@@ -50,7 +21,7 @@ namespace MATRIX_PROC{
       -1.0f,	1.0f,	-1.0f,  1.0f, -1.0f,
       1.0f,	-1.0f,	1.0f, -1.0f,  1.0f
     };
-    m1.set_array(m1_data);
+    m1.set_array(m1_data,25);
 
     std::cout<<"Init Matrix Completed."<<std::endl;
   }
@@ -58,10 +29,10 @@ namespace MATRIX_PROC{
   {
     if(value > 0.0f)
     {
-      return IMG_COLOR::GREEN;
+      return m_image_color::GREEN;
     }
     else{
-      return IMG_COLOR::BLACK;
+      return m_image_color::BLACK;
     }
   }
 
@@ -69,10 +40,10 @@ namespace MATRIX_PROC{
   {
     if(value > 0.0f)
     {
-      return IMG_COLOR::WHITE;
+      return m_image_color::WHITE;
     }
     else{
-      return IMG_COLOR::BLACK;
+      return m_image_color::BLACK;
     }
   }
 

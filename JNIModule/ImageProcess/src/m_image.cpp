@@ -13,19 +13,19 @@ extern "C" {
   #include "jerror.h"
 }
 
-#include "../include/IMG.h"
-IMG_DATA IMG::create(int width, int height)
+#include "../include/m_image.h"
+m_image_data m_image::create(int width, int height)
 {
-  IMG_DATA re;
+  m_image_data re;
   re.width = width;
   re.height = height;
   re.components = 3;
   re.data = (unsigned char*)malloc(sizeof(char)*width*height*re.components);
-  IMG::clear(re,IMG_COLOR::BLACK);
+  m_image::clear(re,m_image_color::BLACK);
   return re;
 }
 
-void IMG::clear(IMG_DATA image_data, unsigned char* color)
+void m_image::clear(m_image_data image_data, unsigned char* color)
 {
   int n = image_data.width*image_data.height;
   int size = image_data.components*sizeof(char);
@@ -37,14 +37,14 @@ void IMG::clear(IMG_DATA image_data, unsigned char* color)
   }
 }
 
-void IMG::draw_rect(IMG_DATA image_data,IMG_RECT rect,unsigned char * rgb){
-  IMG::draw_line(image_data,rect.left,rect.top,rect.left,rect.bottom,rgb);
-  IMG::draw_line(image_data,rect.right,rect.top,rect.right,rect.bottom,rgb);
-  IMG::draw_line(image_data,rect.left,rect.top,rect.right,rect.top,rgb);
-  IMG::draw_line(image_data,rect.right,rect.bottom,rect.left,rect.bottom,rgb);
+void m_image::draw_rect(m_image_data image_data,m_image_rect rect,unsigned char * rgb){
+  m_image::draw_line(image_data,rect.left,rect.top,rect.left,rect.bottom,rgb);
+  m_image::draw_line(image_data,rect.right,rect.top,rect.right,rect.bottom,rgb);
+  m_image::draw_line(image_data,rect.left,rect.top,rect.right,rect.top,rgb);
+  m_image::draw_line(image_data,rect.right,rect.bottom,rect.left,rect.bottom,rgb);
 }
 
-void IMG::fill_rect(IMG_DATA image_data,IMG_RECT rect,unsigned char * rgb)
+void m_image::fill_rect(m_image_data image_data,m_image_rect rect,unsigned char * rgb)
 {
   int line = image_data.width*image_data.components*sizeof(char);
   int cur_p = rect.top*line + rect.left*image_data.components*sizeof(char);
@@ -62,7 +62,7 @@ void IMG::fill_rect(IMG_DATA image_data,IMG_RECT rect,unsigned char * rgb)
 }
 
 
-void IMG::draw_line(IMG_DATA image_data,int x1,int y1,int x2,int y2,unsigned char * rgb){
+void m_image::draw_line(m_image_data image_data,int x1,int y1,int x2,int y2,unsigned char * rgb){
   int d = x2-x1;
   if(d!=0){
     int x,y;
@@ -79,7 +79,7 @@ void IMG::draw_line(IMG_DATA image_data,int x1,int y1,int x2,int y2,unsigned cha
         y=y1-k*i/m;
       }
       if(x>=0 && x<image_data.width && y>=0 && y<image_data.height){
-        IMG::set_rgb(image_data,x,y,rgb);
+        m_image::set_rgb(image_data,x,y,rgb);
       }
     }
   }
@@ -100,20 +100,20 @@ void IMG::draw_line(IMG_DATA image_data,int x1,int y1,int x2,int y2,unsigned cha
           x=x1-k*i/m;
         }
         if(x>=0 && x<image_data.width && y>=0 && y<image_data.height){
-          IMG::set_rgb(image_data,x,y,rgb);
+          m_image::set_rgb(image_data,x,y,rgb);
         }
       }
     }
     else{
-      IMG::set_rgb(image_data,x1,y1,rgb);
+      m_image::set_rgb(image_data,x1,y1,rgb);
     }
   }
   
 }
 
-IMG_DATA IMG::copy_data(IMG_DATA image_data)
+m_image_data m_image::copy_data(m_image_data image_data)
 {
-  IMG_DATA new_data;
+  m_image_data new_data;
   new_data.width = image_data.width;
   new_data.height = image_data.height;
   new_data.components = image_data.components;
@@ -123,7 +123,7 @@ IMG_DATA IMG::copy_data(IMG_DATA image_data)
   return new_data;
 }
 
-unsigned char * IMG::get_rgb(IMG_DATA image_data,int x,int y)
+unsigned char * m_image::get_rgb(m_image_data image_data,int x,int y)
 {
   //unsigned char * rgb = (unsigned char*)malloc(sizeof(char) * image_data.components);
   int line_length = image_data.width*image_data.components;
@@ -132,14 +132,14 @@ unsigned char * IMG::get_rgb(IMG_DATA image_data,int x,int y)
   return rw;
 }
 
-void IMG::set_rgb(IMG_DATA image_data,int x,int y,unsigned char * rgb)
+void m_image::set_rgb(m_image_data image_data,int x,int y,unsigned char * rgb)
 {
   int line_length = image_data.width*image_data.components;
   unsigned char * rw = image_data.data+y*line_length+x*image_data.components;
   memcpy(rw,rgb,image_data.components);
 }
 
-void IMG::set_rgb(IMG_DATA image_data,int x,int y,unsigned char r,unsigned char g,unsigned char b)
+void m_image::set_rgb(m_image_data image_data,int x,int y,unsigned char r,unsigned char g,unsigned char b)
 {
   int line_length = image_data.width*image_data.components;
   unsigned char * rw = image_data.data+y*line_length+x*image_data.components;
@@ -150,7 +150,7 @@ void IMG::set_rgb(IMG_DATA image_data,int x,int y,unsigned char r,unsigned char 
 
 // JPEG IMAGE WR
 
-void IMG::write_JPEG (char * filename, IMG_DATA image_data, int quality)
+void m_image::write_JPEG (char * filename, m_image_data image_data, int quality)
 {
   unsigned char * rgb_data = image_data.data;
   jpeg_compress_struct cinfo;
@@ -210,12 +210,12 @@ my_error_exit (j_common_ptr cinfo)
 }
 
 
-IMG_DATA IMG::read_JPEG (char * filename)
+m_image_data m_image::read_JPEG (char * filename)
 {
   jpeg_decompress_struct cinfo;
   my_error_mgr jerr;
   /* More stuff */
-  IMG_DATA re;
+  m_image_data re;
   FILE * infile;		/* source file */
   JSAMPARRAY buffer;		/* Output row buffer */
   int row_stride;		/* physical row width in output buffer */
@@ -292,8 +292,8 @@ struct BMP_INFO_HEADER
   DWORD bClrImportant; /* 重要的颜色数 */
 };
 
-IMG_DATA IMG::read_BMP(char * filename){
-  IMG_DATA re;
+m_image_data m_image::read_BMP(char * filename){
+  m_image_data re;
   BMP_FILE_HEADER head;
   BMP_INFO_HEADER head_info;
   FILE * infile;		/* source file */
@@ -340,12 +340,12 @@ IMG_DATA IMG::read_BMP(char * filename){
   return re;  
 }
 
-IMG_DATA_CLUSTER IMG::slice_block(IMG_DATA image_data,int size_width,int size_height){
-  IMG_DATA_CLUSTER cluster;
+m_image_data_cluster m_image::slice_block(m_image_data image_data,int size_width,int size_height){
+  m_image_data_cluster cluster;
   cluster.width = ceil((float)image_data.width/(float)size_width);
   cluster.height = ceil((float)image_data.height/(float)size_height);
   cluster.length = cluster.width*cluster.height;
-  cluster.blocks = (IMG_DATA_BLOCK*)malloc(sizeof(IMG_DATA_BLOCK)*cluster.length);
+  cluster.blocks = (m_image_data_block*)malloc(sizeof(m_image_data_block)*cluster.length);
   int components = image_data.components;
   int x = 0;
   int y = 0;
@@ -370,8 +370,8 @@ IMG_DATA_CLUSTER IMG::slice_block(IMG_DATA image_data,int size_width,int size_he
       start_copy_length+=image_data.width*image_data.components*sizeof(char);
       cur_copyTo+=copy_row_length;
     }
-    IMG_DATA_BLOCK item;
-    IMG_DATA itemData;
+    m_image_data_block item;
+    m_image_data itemData;
     itemData.width = copyWidth;
     itemData.height = copyHeight;
     itemData.components = components;

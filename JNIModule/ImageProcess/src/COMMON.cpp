@@ -6,7 +6,7 @@
 #include <string>
 #include <cstring>
 #include <sys/time.h>
-#include "../include/IMG.h"
+#include "../include/m_image.h"
 
 using namespace std;
 
@@ -29,18 +29,18 @@ namespace COMM_FUNC
     return re;
   }
 
-  void output_image(string name,IMG_DATA image_data)
+  void output_image(string name,m_image_data image_data)
   {
     string path = "./output/";
     path.append(name);
-    IMG::write_JPEG(to_p_char(path),image_data,100);
+    m_image::write_JPEG(to_p_char(path),image_data,100);
   }
 
-  IMG_DATA input_image(string name)
+  m_image_data input_image(string name)
   {
     string path = "./input/";
     path.append(name);
-    IMG_DATA jpeg_data = IMG::read_JPEG(to_p_char(path));
+    m_image_data jpeg_data = m_image::read_JPEG(to_p_char(path));
     cout<<"Read JPEG "<<path<<" => width:"<<jpeg_data.width<<",height:"<<jpeg_data.height<<endl;
     return jpeg_data;
   }

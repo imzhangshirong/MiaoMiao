@@ -2,11 +2,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <cfloat>
-#include "../include/MATRIX.h"
+#include <string.h>
+#include <vector>
+#include "../include/m_matrix.h"
 
+using namespace std;
 
-MATRIX2::MATRIX2(int width, int height, float value)
+m_matrix::m_matrix(int width, int height, float value)
 {
   this->width = width;
   this->height = height;
@@ -18,9 +20,24 @@ MATRIX2::MATRIX2(int width, int height, float value)
   }
 }
 
-MATRIX2 MATRIX2::subset(int x,int y,int width,int height)
+m_matrix::m_matrix(const m_matrix &m)
 {
-  MATRIX2 re(width,height);
+  *this = m;
+}
+
+m_matrix &m_matrix::operator= (const m_matrix &m)
+{
+  width = m.width;
+  height = m.height;
+  int size = width*height;
+  this->m_map = (float*)malloc(size*sizeof(float));
+  memcpy(this->m_map,m.m_map,size*sizeof(float));
+  return *this;
+}
+
+m_matrix m_matrix::subset(int x,int y,int width,int height)
+{
+  m_matrix re(width,height);
   int cur=0;
   for(int i=0;i<height;i++)
   {
@@ -33,34 +50,46 @@ MATRIX2 MATRIX2::subset(int x,int y,int width,int height)
   return re;
 }
 
-float* MATRIX2::data()
+float* m_matrix::data()
 {
   return this->m_map;
 }
 
-MATRIX2::MATRIX2(int width, int height)
+m_matrix::m_matrix(int width, int height)
 {
-  new (this) MATRIX2(width,height,0.0f);
+  new (this) m_matrix(width,height,0.0f);
 }
 
-float MATRIX2::get(int x, int y)
+float m_matrix::get(int x, int y)
 {
   return *(this->m_map+y*this->width+x);
 }
 
-void MATRIX2::set(int x, int y, float value)
+void m_matrix::set(int x, int y, float value)
 {
   *(this->m_map+y*this->width+x) = value;
 }
 
-void MATRIX2::set_array(float* data)
+void m_matrix::set_array(float* data,int n)
 {
-  this->m_map = data;
+  int size = width*height;  
+  this->m_map = (float*)malloc(size*sizeof(float));
+  memcpy(this->m_map,data,size*sizeof(float));
 }
 
-MATRIX2 MATRIX2::conv_scale(MATRIX2 matrix,MATRIX2_RECT* areas,int n)
+void m_matrix::set_vector(vector<float> &data)
 {
-  if(areas == NULL)return this->conv_scale(matrix);
+  if (!data.empty())
+  {
+    int size = width*height;  
+    this->m_map = (float*)malloc(size*sizeof(float));
+    memcpy(this->m_map,&data[0],size*sizeof(float));
+  }
+}
+
+m_matrix m_matrix::conv_scale(m_matrix &matrix,m_matrix_rect* areas,int n)
+{
+  if(areas==NULL)return this->conv_scale(matrix);
   int max_width = this->width/matrix.width;
   int max_height = this->height/matrix.height;
   int cur = 0;
@@ -68,10 +97,10 @@ MATRIX2 MATRIX2::conv_scale(MATRIX2 matrix,MATRIX2_RECT* areas,int n)
   int col = 0;
   int x = 0;
   int y = 0;
-  MATRIX2 re(max_width, max_height);
+  m_matrix re(max_width, max_height);
   for(int a=0;a<n;a++)
   {
-    MATRIX2_RECT rect = areas[a];
+    m_matrix_rect rect = *(areas+a);
     if(rect.flag==0)continue;
     cur=rect.y*this->width+rect.x;
     int max_a_h = rect.height/matrix.height;
@@ -95,17 +124,18 @@ MATRIX2 MATRIX2::conv_scale(MATRIX2 matrix,MATRIX2_RECT* areas,int n)
           y+=this->width;
         }
         x+=matrix.width;
-        *(re.m_map+row*max_width+col)=temp;
+        *(re.data()+row*max_width+col)=temp;
         col++;
       }
       row++;
       cur+=this->width*matrix.height;
     }
   }
+  
   return re;
 }
 
-MATRIX2 MATRIX2::conv_scale(MATRIX2 matrix)
+m_matrix m_matrix::conv_scale(m_matrix &matrix)
 {
   int max_width = this->width/matrix.width;
   int max_height = this->height/matrix.height;
@@ -114,7 +144,7 @@ MATRIX2 MATRIX2::conv_scale(MATRIX2 matrix)
   int col = 0;
   int x = 0;
   int y = 0;
-  MATRIX2 re(max_width, max_height);
+  m_matrix re(max_width, max_height);
   for(int i=0;i<re.height;i++)
   {
     x = 0;
@@ -132,18 +162,19 @@ MATRIX2 MATRIX2::conv_scale(MATRIX2 matrix)
         y+=this->width;
       }
       x+=matrix.width;
-      *(re.m_map+col)=temp;
+      *(re.data()+col)=temp;
       col++;
     }
     cur+=this->width*matrix.height;
   }
+  
   return re;
 }
 
-MATRIX2 MATRIX2::conv(MATRIX2 matrix)
+m_matrix m_matrix::conv(m_matrix &matrix)
 {
   int half = matrix.width/2;
-  MATRIX2 re(this->width,this->height);
+  m_matrix re(this->width,this->height);
   int base_x = 0;
   int base_y = 0;
   int x = 0;
@@ -174,20 +205,20 @@ MATRIX2 MATRIX2::conv(MATRIX2 matrix)
   return re;
 }
 
-void MATRIX2::print()
+void m_matrix::print()
 {
   for(int i=0;i<this->height;i++)
   {
     for(int j=0;j<this->width;j++)
     {
       if(j>0)std::cout<<",";
-      std::cout<<this->get(j,i);
+      cout<<this->get(j,i);
     }
-    std::cout<<std::endl;
+    cout<<endl;
   }
 }
 
-void MATRIX2::add(float value)
+void m_matrix::add(float value)
 {
   int n = this->width*this->height;
   for(int i=0;i<n;i++)
@@ -196,7 +227,7 @@ void MATRIX2::add(float value)
   }
 }
 
-void MATRIX2::mul(float value)
+void m_matrix::mul(float value)
 {
   int n = this->width*this->height;
   for(int i=0;i<n;i++)
@@ -205,7 +236,7 @@ void MATRIX2::mul(float value)
   }
 }
 
-void MATRIX2::filter(float (*filter)(int,int,float))
+void m_matrix::filter(float (*filter)(int,int,float))
 {
   for(int i=0;i<this->height;i++)
   {
@@ -216,7 +247,7 @@ void MATRIX2::filter(float (*filter)(int,int,float))
   }
 }
 
-void MATRIX2::filter(float (*filter)(int,int,float,float*),float* params)
+void m_matrix::filter(float (*filter)(int,int,float,float*),float* params)
 {
   for(int i=0;i<this->height;i++)
   {
@@ -228,7 +259,7 @@ void MATRIX2::filter(float (*filter)(int,int,float,float*),float* params)
 }
 
 
-float MATRIX2::min()
+float m_matrix::min()
 {
   float min = FLT_MAX;
   int n = this->width*this->height;
@@ -240,9 +271,9 @@ float MATRIX2::min()
   return min;
 }
 
-float MATRIX2::maxf()
+float m_matrix::maxf()
 {
-  float max = FLT_MIN;
+  float max = -FLT_MAX;
   int n = this->width*this->height;
   for(int i=0;i<n;i++)
   {
@@ -255,10 +286,10 @@ float MATRIX2::maxf()
   return max;
 }
 
-MATRIX2_INDEXF MATRIX2::max()
+m_matrix_index_info m_matrix::max()
 {
-  MATRIX2_INDEXF index;
-  index.value = FLT_MIN;
+  m_matrix_index_info index;
+  index.value = -FLT_MAX;
   int n = this->width*this->height;
   for(int i=0;i<this->height;i++)
   {
@@ -276,7 +307,7 @@ MATRIX2_INDEXF MATRIX2::max()
   return index;
 }
 
-float MATRIX2::average()
+float m_matrix::average()
 {
   float all = 0.0f;
   int n = this->width*this->height;
@@ -288,109 +319,13 @@ float MATRIX2::average()
   return all/n;
 }
 
-
-/////////////////////////////////////
-COMPLEX2::COMPLEX2()
+m_matrix::~m_matrix()
 {
-  this->rl=0.0f;
-  this->im=0.0f;
-}
-COMPLEX2::COMPLEX2(float rl,float im)
-{
-  this->rl=rl;
-  this->im=im;
-}
-float COMPLEX2::modulo()
-{
-  return powf(powf(this->rl,2.0f)+powf(this->im,2.0f),0.5f);
-}
-
-void COMPLEX2::add(COMPLEX2 cop)
-{
-  this->rl+=cop.rl;
-  this->im+=cop.im;
-}
-
-void COMPLEX2::mul(COMPLEX2 cop)
-{
-  float rl=this->rl;
-  this->rl=this->rl*cop.rl-this->im*cop.im;
-  this->im=rl*cop.im+this->im*cop.rl;
-}
-
-void COMPLEX2::print()
-{
-  std::cout<<"("<<this->rl<<","<<this->im<<"i)"<<std::endl;
-}
-
-MATRIX_C2::MATRIX_C2(int width, int height)
-{
-  new (this) MATRIX_C2(width,height,COMPLEX2{0.0f,0.0f});
-}
-MATRIX_C2::MATRIX_C2(int width, int height, COMPLEX2 value)
-{
-  this->width = width;
-  this->height = height;
-  int size = width*height;
-  this->m_map = (COMPLEX2*)malloc(size*sizeof(COMPLEX2));
-  for(int i=0;i<size;i++)
+  if(this->height>0 && this->width>0 && this->m_map != NULL)
   {
-    *(this->m_map+i)=value;
+    free(this->m_map);
+    this->m_map = NULL;
+    this->height = 0;
+    this->width = 0;
   }
-}
-
-COMPLEX2 MATRIX_C2::get(int x, int y)
-{
-  return *(this->m_map+y*this->width+x);
-}
-
-void MATRIX_C2::set(int x, int y, COMPLEX2 value)
-{
-  *(this->m_map+y*this->width+x) = value;
-}
-
-void MATRIX_C2::set_array(COMPLEX2* data)
-{
-  this->m_map = data;
-}
-
-void MATRIX_C2::print()
-{
-  for(int i=0;i<this->height;i++)
-  {
-    for(int j=0;j<this->width;j++)
-    {
-      if(j>0)std::cout<<",";
-      COMPLEX2 cop = this->get(j,i);
-      std::cout<<"("<<cop.rl<<","<<cop.im<<")";
-    }
-    std::cout<<std::endl;
-  }
-}
-
-void MATRIX_C2::add(COMPLEX2 value)
-{
-  int n = this->width*this->height;
-  for(int i=0;i<n;i++)
-  {
-    (*(this->m_map+i)).add(value);
-  }
-}
-
-COMPLEX2* MATRIX_C2::data()
-{
-  return this->m_map;
-}
-
-MATRIX2 MATRIX_C2::to_float()
-{
-  MATRIX2 re(this->width,this->height);
-  int n = re.width*re.height;
-  float* m_cur=re.data();
-  COMPLEX2* cop_cur=this->data();
-  for(int i=0;i<n;i++)
-  {
-    *(m_cur+i)=(*(cop_cur+i)).modulo();
-  }
-  return re;
 }
