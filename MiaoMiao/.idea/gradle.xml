@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="/mnt/windows/F/IMD/MiaoMiao/MiaoMiao" />
-            <option value="/mnt/windows/F/IMD/MiaoMiao/MiaoMiao/app" />
+            <option value="/mnt/windows/F/MiaoMiao/MiaoMiao" />
+            <option value="/mnt/windows/F/MiaoMiao/MiaoMiao/app" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
