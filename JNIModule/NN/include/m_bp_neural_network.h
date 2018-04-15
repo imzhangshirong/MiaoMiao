@@ -2,42 +2,40 @@
 #define M_BP_NEURAL_NETWORK_H
 
 #include <vector>
+#include <armadillo>
 using namespace std;
+using namespace arma;
 
 class m_bp_neural_network
 {
 private:
+  void sim(mat &input,int index);
+  bool stop_train;
 public:
-  int input_num;
-  int net_num;
-  int output_num;
-  int sample_num;
-  float alpha;
-  float lambda;
-  float sigma;
-  m_matrix* layers;//n
-  m_matrix* bases;//n
-  m_matrix* delta_layers;//n
-  m_matrix* delta_bases;//n
-  m_matrix* last_delta_layers;//n
-  m_matrix* layers_f_input;//n+1
-  m_matrix* layers_net_input;//n+1
-  m_matrix errors;
-
-
-  m_bp_neural_network(int input_num,initializer_list<int> net_num,int output_num,float alpha,float lambda,float sigma);
-  m_matrix gene(m_matrix &input,float (*func)(float));
-  m_matrix error(m_matrix &result);
-  void clean_input();
-  void back_propagation(m_matrix &result,float (*funcd)(float));
+  int n_input;
+  int n_layers;
+  int n_output;
+  double step;
+  string* layers_func;
+  mat* layers;//n
+  mat* bases;//n
+  mat* delta_layers;//n
+  mat* delta_bases;//n
+  mat* hessian_layers;//n
+  mat* last_delta_layers;//n
+  mat* layers_f_input;//n+1
+  mat* layers_net_input;//n+1
+  mat errors;
+  mat mse;
+  double mse_v;
+  mat sim(mat &input);
+  m_bp_neural_network(int input_num, initializer_list<int> net_num,initializer_list<string> net_func);
+  void forward(vector<mat> &input, vector<mat> &result);
+  void back_propagation(int sample_num);
   void print();
   void init();
-  float error_f(m_matrix &result);
-  m_matrix cost(m_matrix &result);
-  void update();
-  m_matrix error();
-  void clean_delta();
-  m_matrix cross_entropy_cost(m_matrix &result);
+  void update(string type,vector<mat> &input, vector<mat> &result);
+  void train(string train_func, vector<mat> &input, vector<mat> &result, int max_epoch, double alpha);
 };
 
 #endif

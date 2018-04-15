@@ -1,301 +1,420 @@
-#include "../include/m_matrix.h"
 #include "../include/m_bp_neural_network.h"
 #include <vector>
 #include <iostream>
+#include <armadillo>
 #include <math.h>
 
 using namespace std;
+using namespace arma;
 
-m_bp_neural_network::m_bp_neural_network(int input_num, initializer_list<int> net_num, int output_num,float alpha,float lambda,float sigma)
+m_bp_neural_network::m_bp_neural_network(int input_num, initializer_list<int> net_num, initializer_list<string> net_func)
 {
-  this->alpha = alpha;
-  this->lambda = lambda;
-  this->sigma = sigma;
-  int net_s = net_num.size();
-  this->layers = new m_matrix[net_s+1];
-  this->bases = new m_matrix[net_s+1];
-  
-  this->layers_f_input = new m_matrix[net_s+2];
-  this->layers_net_input = new m_matrix[net_s+2];
+  this->step = step;
+  int n_layers = net_num.size();
+  this->layers_func = new string[n_layers];
+  this->layers = new mat[n_layers];
+  this->bases = new mat[n_layers];
+  this->hessian_layers = new mat[n_layers];
 
-  this->input_num = input_num;
-  this->net_num = net_s;
-  this->output_num = output_num;
-  m_matrix r(input_num, 1);
-  
-  this->layers_net_input[0]=m_matrix(r);
-  this->layers_f_input[0]=m_matrix(r);
-  
+  this->layers_f_input = new mat[n_layers + 1];
+  this->layers_net_input = new mat[n_layers + 1];
+  this->n_input = input_num;
+  this->n_layers = n_layers;
+  mat r(1, input_num);
+
+  this->layers_net_input[0] = r;
+  this->layers_f_input[0] = r;
+
   const int *nets_c = net_num.begin();
-  m_matrix w(*(nets_c), input_num);
-  m_matrix b(*(nets_c), 1);
-  r = m_matrix(*(nets_c), 1);
-  this->layers[0] = w;
-  this->bases[0] =b;
-  this->layers_net_input[1]=m_matrix(r);
-  this->layers_f_input[1]=m_matrix(r);
-  for (int i = 0; i < net_s - 1; i++)
-  {
-    w = m_matrix(*(nets_c + i + 1), *(nets_c + i));
-    b = m_matrix(*(nets_c + i + 1), 1);
-    r = m_matrix(*(nets_c + i + 1), 1);
-    this->layers[i+1]=w;
-    this->bases[i+1]=b;
-    this->layers_f_input[i+2]=r;
-    this->layers_net_input[i+2]=m_matrix(r);
-    
-  }
-  w = m_matrix(output_num, *(nets_c+net_s - 1));
-  b = m_matrix(output_num, 1);
-  r = m_matrix(output_num, 1);
-  this->layers[net_s] = w;
-  this->bases[net_s] = b;
-  this->layers_f_input[net_s+1]=r;
-  this->layers_net_input[net_s+1]=r;
-  this->errors = r;
-  this->sample_num = 0;
+  const string *nets_func = net_func.begin();
+  this->n_output = *(nets_c + n_layers - 1);
 
-  this->delta_layers = new m_matrix[net_s+1];
-  this->last_delta_layers = new m_matrix[net_s+1];
-  this->delta_bases = new m_matrix[net_s+1];
-  for(int i=0;i<net_s+1;i++)
+  mat w(input_num, *(nets_c));
+  mat b(1, *(nets_c));
+  r = mat(1, *(nets_c));
+  this->layers[0] = w;
+  this->layers_func[0] = *(nets_func);
+  this->bases[0] = b;
+  this->layers_net_input[1] = r;
+  this->layers_f_input[1] = r;
+  for (int i = 0; i < n_layers - 2; i++)
   {
-    this->delta_layers[i] = m_matrix(this->layers[i].width, this->layers[i].height);
-    this->last_delta_layers[i] = m_matrix(this->layers[i].width, this->layers[i].height);
-    this->delta_bases[i] = m_matrix(this->bases[i].width, this->bases[i].height);
+    w = mat(*(nets_c + i), *(nets_c + i + 1));
+    b = mat(1, *(nets_c + i + 1));
+    r = mat(1, *(nets_c + i + 1));
+    this->layers[i + 1] = w;
+    this->layers_func[i + 1] = *(nets_func + i + 1);
+    this->bases[i + 1] = b;
+    this->layers_f_input[i + 2] = r;
+    this->layers_net_input[i + 2] = r;
+  }
+  w = mat(*(nets_c + n_layers - 2), this->n_output);
+  b = mat(1, this->n_output);
+  r = mat(1, this->n_output);
+  this->layers[n_layers - 1] = w;
+  this->layers_func[n_layers - 1] = *(nets_func + n_layers - 2);
+  this->bases[n_layers - 1] = b;
+  this->layers_f_input[n_layers] = r;
+  this->layers_net_input[n_layers] = r;
+
+  this->delta_layers = new mat[n_layers];
+  this->last_delta_layers = new mat[n_layers];
+  this->delta_bases = new mat[n_layers];
+  for (int i = 0; i < n_layers; i++)
+  {
+    this->delta_layers[i] = mat(this->layers[i].n_rows, this->layers[i].n_cols);
+    this->last_delta_layers[i] = mat(this->layers[i].n_rows, this->layers[i].n_cols);
+    this->delta_bases[i] = mat(this->bases[i].n_rows, this->bases[i].n_cols);
   }
 }
 
-float sub1(float x)
+double sigmoid_tanh(double x)
 {
-  return (x-0.5f)*2;
+  double v = tanhf(x);
+  return v;
+}
+
+double dsigmoid_tanh(double x)
+{
+  double d = sigmoid_tanh(x);
+  return 1 - d * d;
+}
+
+double sigmoid(double x)
+{
+  double v = 1 / (1 + exp(-x));
+  return v;
+}
+
+double linear(double x)
+{
+  return x;
+}
+
+double dlinear(double x)
+{
+  return 1;
+}
+
+double dsigmoid(double x)
+{
+  double d = sigmoid(x);
+  return d * (1 - d);
+}
+
+void mapper(mat &mat, double (*func)(double))
+{
+  for (int i = 0; i < mat.n_rows; i++)
+  {
+    for (int j = 0; j < mat.n_cols; j++)
+    {
+      mat(i, j) = func(mat(i, j));
+    }
+  }
+}
+
+void sig_func(string name, mat &input)
+{
+  double (*func)(double) = NULL;
+  if (name == "logsig")
+  {
+    func = sigmoid;
+  }
+  else if (name == "tansig")
+  {
+    func = sigmoid_tanh;
+  }
+  else if (name == "linear")
+  {
+    func = linear;
+  }
+  mapper(input, func);
+}
+
+void sig_dfunc(string name, mat &input)
+{
+  double (*func)(double) = NULL;
+
+  if (name == "logsig")
+  {
+    func = dsigmoid;
+  }
+  else if (name == "tansig")
+  {
+    func = dsigmoid_tanh;
+  }
+  else if (name == "linear")
+  {
+    func = dlinear;
+  }
+  mapper(input, func);
+}
+
+double init_rand(double x)
+{
+  return (x - 0.5) * 2;
 }
 
 void m_bp_neural_network::init()
 {
-  for(int i=0;i<this->net_num+1;i++)
+  for (int i = 0; i < this->n_layers; i++)
   {
-    this->layers[i].random();
-    //this->layers[i].filter(sub1);
-    //this->layers[i].mul(1.0f/100);
-  }
-  for(int i=0;i<this->net_num+1;i++)
-  {
-    this->bases[i].random();
-    //this->bases[i].filter(sub1);
-    //this->bases[i].mul(1.0f/100);
+    this->layers[i].randu();
+    mapper(this->layers[i], init_rand);
+    this->bases[i].randu();
+    mapper(this->bases[i], init_rand);
   }
 }
 
 void m_bp_neural_network::print()
 {
-  cout<<"\n/////////////////INPUT/////////////////"<<endl;
+  cout << "\n/////////////////INPUT/////////////////" << endl;
   layers_f_input[0].print();
-  cout<<"======================================="<<endl;
-  for(int i=0;i<this->net_num+1;i++)
+  cout << "=======================================" << endl;
+  for (int i = 0; i < this->n_layers; i++)
   {
     layers[i].print();
-    cout<<"--------------------------"<<endl;
+    cout << "--------------------------" << endl;
     bases[i].print();
-    cout<<"--------------------------OUT"<<endl;
-    layers_net_input[i+1].print();
-    cout<<"--------------------------Func OUT"<<endl;
-    layers_f_input[i+1].print();
-    cout<<"======================================="<<endl;
+    cout << "--------------------------OUT" << endl;
+    layers_net_input[i + 1].print();
+    cout << "--------------------------Func OUT" << endl;
+    layers_f_input[i + 1].print();
+    cout << "=======================================" << endl;
   }
 }
 
-void m_bp_neural_network::clean_input()
+mat m_bp_neural_network::sim(mat &input)
 {
-  for (int i = 0; i < this->net_num+2; i++)
+  mat re = input;
+  for (int i = 0; i < this->n_layers; i++)
   {
-    this->layers_f_input[i].mul(0);
-    this->layers_net_input[i].mul(0);
-  }
-}
-
-m_matrix m_bp_neural_network::gene(m_matrix &input, float (*func)(float))
-{
-  m_matrix re(input);
-  
-  this->clean_input();
-  this->layers_f_input[0] = input; 
-  this->layers_net_input[0] = input;
-  for (int i = 0; i < this->net_num+1; i++)
-  {
-    m_matrix m1 = this->layers_f_input[i].mul(this->layers[i]);
-    m_matrix m2 = m1.add(this->bases[i]);
-    this->layers_net_input[i + 1] = m_matrix(m2);
-    //if(i<this->net_num)
-    m2.filter(func);
-    this->layers_f_input[i + 1] = m2;
-    re.release();
+    mat m1 = re * this->layers[i];
+    mat m2 = m1 + this->bases[i];
+    sig_func(this->layers_func[i], m2);
     re = m2;
-    
-  }
-
-  return re;
-}
-
-float powf2(float x)
-{
-  return powf(x,2);
-}
-
-m_matrix m_bp_neural_network::cost(m_matrix &result)
-{
-  m_matrix cost = this->error(result);
-  cost.filter(powf2);
-  cost.mul(0.5f);
-  return cost;
-}
-
-float m_bp_neural_network::error_f(m_matrix &result)
-{
-  int kn = this->net_num+1;
-  m_matrix re = this->error(result);
-  float err_f=0;
-  for(int i=0;i<this->output_num;i++)
-  {
-    err_f+=powf(re.get(i,0),2);
-  }
-  return err_f/this->output_num;
-}
-
-m_matrix m_bp_neural_network::error(m_matrix &result)
-{
-  int kn = this->net_num+1;
-  m_matrix err(this->layers_f_input[kn]);
-  err.mul(-1);
-  m_matrix re = err.add(result);
-  return re;
-}
-
-m_matrix m_bp_neural_network::error()
-{
-  if(this->sample_num==0)return m_matrix(0,0);
-  m_matrix all_error = this->errors;
-  all_error.mul(1.0f/this->sample_num);
-  return all_error;
-}
-
-
-void m_bp_neural_network::back_propagation(m_matrix &result,float (*funcd)(float))
-{
-  //m_matrix cost = this->cost(result);
-  //cout<<"Cost///////////////////////"<<endl;
-  //cost.print();
-  //alpha learnRate
-  int kn = this->net_num+1;
-  m_matrix* layersNext = new m_matrix[kn];
-  m_matrix* basesNext = new m_matrix[kn];
-  m_matrix error = this->error(result);
-  m_matrix error_abs = error;
-  error_abs.filter(powf2);
-  float min_err = error_abs.min();
-  if(min_err<0.0000001){
-    //cout<<"skip"<<endl;
-    return;
-  }
-  error_abs.mul(0.5f);
-  m_matrix all_error = this->errors;
-  this->errors.release();
-  this->errors = all_error.add(error_abs);
-  error.mul(-1);
-  //m_matrix net0 = this->layers_net_input[kn];
-  //net0.filter(funcd);
-  //m_matrix S = error.mul_v(net0);
-  m_matrix S = error;
-  for(int k=kn-1;k>=0;k--)
-  {
-    //cout<<"S///////////////////////"<<endl;
-    //S.print();
-    //this->layers_f_input[k].print();
-    m_matrix f_i_cur = this->layers_f_input[k].transpose();
-    //f_i_cur.print();
-    //cout<<k<<"|dW///////////////////////"<<endl;
-    m_matrix dW = f_i_cur.mul(S);
-    //dW.print();
-    //cout<<k<<"|dB///////////////////////"<<endl;
-    m_matrix dB = S;
-    //dB.print();
-    //cout<<k<<"|///////////////////////"<<endl;
-    //this->delta_layers[k].print();
-    //cout<<k<<"|///////////////////////"<<endl;
-    
-    layersNext[k]=this->delta_layers[k].add(dW);
-    basesNext[k]=this->delta_bases[k].add(dB);
-    //layersNext[k].print();
-    m_matrix net_cur = this->layers_net_input[(k)];
-    m_matrix W_cur = this->layers[k].transpose(); 
-    net_cur.filter(funcd);
-    m_matrix Ws = S.mul(W_cur);
-    S.release();
-    S = Ws.mul_v(net_cur);
-  }
-  delete [] this->delta_layers;
-  delete [] this->delta_bases;
-  this->delta_layers = layersNext;
-  this->delta_bases = basesNext;
-  this->sample_num++;
-  //this->delta_layers[0].print();
-  //cout<<endl<<endl;
-}
-
-float lnf(float x)
-{
-  return logf(x)/logf(M_E);
-}
-
-m_matrix m_bp_neural_network::cross_entropy_cost(m_matrix &result)
-{
-  int kn = this->net_num+1;
-  m_matrix re = result;
-  for(int i=0;i<result.width;i++)
-  {
-    float y = result.get(i,0);
-    float a = this->layers_f_input[kn].get(i,0);
-    re.set(i,0,-(y*lnf(a)+(1-y)*lnf(1-a)));
   }
   return re;
 }
 
-void m_bp_neural_network::clean_delta()
+void m_bp_neural_network::sim(mat &input, int index)
 {
-  
-  int kn = this->net_num+1;
-  for(int i=0;i<kn;i++)
+  this->layers_f_input[0].row(index) = input;
+  this->layers_net_input[0].row(index) = input;
+  for (int i = 0; i < this->n_layers; i++)
   {
-    this->last_delta_layers[i].set_array(this->delta_layers[i].data(),this->delta_layers[i].width*this->delta_layers[i].height);
-    this->delta_layers[i].mul(0);
-    this->delta_bases[i].mul(0);
+    mat m1 = this->layers_f_input[i].row(index) * this->layers[i];
+    mat m2 = m1 + this->bases[i];
+    this->layers_net_input[i + 1].row(index) = m2;
+    sig_func(this->layers_func[i], m2);
+    this->layers_f_input[i + 1].row(index) = m2;
   }
-  this->sample_num = 0;
-  this->errors.mul(0);
 }
 
-void m_bp_neural_network::update()
+double pow2(double x)
 {
-  if(this->sample_num==0)return;
-  int kn = this->net_num+1;
-  float ka = -this->alpha/this->sample_num;
-  float ks = -this->sigma/this->sample_num;
-  m_matrix* layersNext = new m_matrix[kn];
-  m_matrix* basesNext = new m_matrix[kn];
-  for(int i=0;i<kn;i++)
+  return pow(x, 2);
+}
+//train_func : traingd,trainlm
+void m_bp_neural_network::train(string train_func, vector<mat> &input, vector<mat> &result, int max_epoch, double alpha)
+{
+  this->stop_train = false;
+  int kn = this->n_layers;
+  this->step = alpha;
+  int sample_num = input.size();
+  for (int i = 0; i < kn; i++)
   {
-    this->delta_layers[i].mul(ka);
-    this->delta_bases[i].mul(ka);
-    m_matrix temp = this->layers[i];
-    temp.mul(-this->alpha*this->lambda);
-    m_matrix last = this->last_delta_layers[i];
-    last.mul(ks);
-    layersNext[i] = this->layers[i].add(this->delta_layers[i]).add(last);
-    basesNext[i] = this->bases[i].add(this->delta_bases[i]);
+    this->hessian_layers[i].set_size(sample_num, this->layers[i].n_cols * (this->layers[i].n_rows + 1));
   }
-  delete [] this->layers;
-  delete [] this->bases;
-  this->layers = layersNext;
-  this->bases = basesNext;
-  this->clean_delta();
+  for (int i = 0; i < kn + 1; i++)
+  {
+    this->layers_f_input[i].set_size(sample_num, this->layers_f_input[i].n_cols);
+    this->layers_net_input[i].set_size(sample_num, this->layers_f_input[i].n_cols);
+  }
+  this->mse.set_size(sample_num, 1);
+  this->errors.set_size(sample_num, this->n_output);
+  this->forward(input, result);
+  this->mse_v = as_scalar(sum(sum(this->mse))) / sample_num;
+  for (int i = 0; i < max_epoch; i++)
+  {
+    cout << i + 1 << " => MSE:" << this->mse_v << endl;
+    this->back_propagation(sample_num);
+    this->update(train_func, input, result);
+    if (this->stop_train)
+    {
+      cout << i + 1 << " End Training!" << endl;
+      break;
+    }
+  }
+}
+
+void m_bp_neural_network::forward(vector<mat> &input, vector<mat> &result)
+{
+  int kn = this->n_layers;
+  int sample_num = input.size();
+
+  for (int j = 0; j < sample_num; j++)
+  {
+    this->sim(input[j], j);
+    mat error = result[j] - this->layers_f_input[kn].row(j);
+    mat mse = error;
+    mapper(mse, pow2);
+    this->mse(j, 0) = as_scalar(sum(sum(mse))) / 2;
+    this->errors.row(j) = error;
+  }
+}
+
+void m_bp_neural_network::back_propagation(int sample_num)
+{
+  int kn = this->n_layers;
+  //this->errors.print("eeeeeeeeeeee");
+  for (int i = 0; i < sample_num; i++)
+  {
+    mat error = this->errors.row(i);
+    mat net0 = this->layers_net_input[kn].row(i);
+    sig_dfunc(this->layers_func[kn - 1], net0);
+    mat S = net0 % error * (-1);
+    for (int k = kn - 1; k >= 0; k--)
+    {
+      mat f_i_cur = this->layers_f_input[k].row(i);
+      mat St = S.t();
+      mat dW = St * f_i_cur;
+      mat dB = St;
+      mat dWB = mat(dW.n_rows, dW.n_cols + 1);
+      dWB.cols(0, dW.n_cols - 1) = dW;
+
+      dWB.col(dWB.n_cols - 1) = dB;
+      dWB.set_size(dWB.n_rows * dWB.n_cols, 1);
+      dWB = dWB.t();
+
+      this->hessian_layers[k].row(i) = dWB;
+      mat net_cur = this->layers_net_input[(k)].row(i);
+      mat W_cur = this->layers[k].t();
+      if (k > 0)
+      {
+        sig_dfunc(this->layers_func[k], net_cur);
+        mat Ws = S * W_cur;
+        S = Ws % (net_cur);
+      }
+    }
+  }
+}
+
+double lnf(double x)
+{
+  return logf(x) / logf(M_E);
+}
+
+void m_bp_neural_network::update(string type, vector<mat> &input, vector<mat> &result)
+{
+
+  int kn = this->n_layers;
+
+  int max_step_times = 100;
+  int sample_num = input.size();
+  if (type == "trainlm")
+  {
+    double mu_step = 2;
+    int cols = 0;
+    for (int i = 0; i < kn; i++)
+    {
+      cols += this->hessian_layers[i].n_cols;
+    }
+    mat hessian = mat(sample_num, cols);
+    int last_cols = 0;
+    for (int i = 0; i < kn; i++)
+    {
+      hessian.cols(last_cols, last_cols + this->hessian_layers[i].n_cols - 1) = this->hessian_layers[i];
+      last_cols += this->hessian_layers[i].n_cols;
+    }
+    mat hessian_trans = hessian.t();
+    mat HtH = hessian_trans * hessian;
+    mat kI;
+    kI.copy_size(HtH);
+    kI.eye();
+    mat delta = hessian_trans * this->mse;
+
+    double old_step = this->step;
+    int k = 0;
+    for (k = 0; k < max_step_times; k++)
+    {
+      mat Hi = inv(HtH + this->step * kI);
+      mat delta_k = Hi * delta;
+      delta_k = delta_k.t();
+      //delta_k.print("MMMMMMM");
+      last_cols = 0;
+      for (int i = 0; i < kn; i++)
+      {
+
+        mat dWB = delta_k.cols(last_cols, last_cols + this->hessian_layers[i].n_cols - 1);
+        //dW.print("dW");
+        dWB.set_size(this->layers[i].n_cols, this->layers[i].n_rows + 1);
+        dWB = dWB.t();
+        mat dB = dWB.row(dWB.n_rows - 1);
+        mat dW = mat(dWB.n_rows - 1, dWB.n_cols);
+        dW = dWB.rows(0, dW.n_rows - 1);
+        //dB.print("dB");
+        this->delta_layers[i] = dW;
+        this->delta_bases[i] = dB;
+        //this->layers[i].print();
+        //this->bases[i].print();
+        this->layers[i] -= dW;
+        this->bases[i] -= dB;
+        last_cols += this->hessian_layers[i].n_cols;
+      }
+      forward(input, result);
+      double mse_ = as_scalar(sum(sum(this->mse))) / sample_num;
+
+      if (mse_ < this->mse_v)
+      {
+        this->step /= mu_step;
+        cout << this->step << "|" << this->mse_v << " => " << mse_ << endl;
+        this->mse_v = mse_;
+        break;
+      }
+      for (int i = kn - 1; i >= 0; i--)
+      {
+        this->layers[i] += this->delta_layers[i];
+        this->bases[i] += this->delta_bases[i];
+      }
+      this->step *= mu_step;
+    }
+    if (k >= max_step_times && this->step > old_step)
+    {
+      this->step = old_step;
+      this->stop_train = true;
+    }
+  }
+  else if (type == "traingd")
+  {
+    for (int i = 0; i < kn; i++)
+    {
+      this->delta_layers[i].fill(0);
+      this->delta_bases[i].fill(0);
+      for (int j = 0; j < sample_num; j++)
+      {
+        mat dWB = this->hessian_layers[i].row(j);
+        dWB.set_size(this->layers[i].n_cols, this->layers[i].n_rows + 1);
+
+        dWB = dWB.t();
+        mat dB = dWB.row(dWB.n_rows - 1);
+        mat dW = mat(dWB.n_rows - 1, dWB.n_cols);
+        dW = dWB.rows(0, dW.n_rows - 1);
+        this->delta_layers[i] += dW;
+        this->delta_bases[i] += dB;
+      }
+    }
+    double old_step = this->step;
+    int k = 0;
+    double alpha = this->step / sample_num;
+    for (int i = 0; i < kn; i++)
+    {
+      this->layers[i] -= alpha * this->delta_layers[i];
+      this->bases[i] -= alpha * this->delta_bases[i];
+    }
+    forward(input, result);
+    double mse_ = as_scalar(sum(sum(this->mse))) / sample_num;
+    cout << this->step << "|" << this->mse_v << " => " << mse_ << endl;
+    this->mse_v = mse_;
+  }
 }

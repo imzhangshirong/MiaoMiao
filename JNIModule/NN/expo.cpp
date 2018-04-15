@@ -4,7 +4,7 @@
 #include <vector>
 #include <random>
 #include <math.h>
-#include "src/m_matrix.cpp"
+#include <armadillo>
 #include "src/m_bp_neural_network.cpp"
 
 using namespace std;
@@ -26,7 +26,17 @@ int ReverseInt(int i)
   return ((int)ch1 << 24) + ((int)ch2 << 16) + ((int)ch3 << 8) + ch4;
 }
 
-void read_Mnist_Label(string filename, vector<float> &labels)
+mat build_mat_by_image(vector<double> &image_data)
+{
+  mat re = mat(1,image_data.size());
+  for(int i=0;i<image_data.size();i++)
+  {
+    re(0,i)=image_data[i];
+  }
+  return re;
+}
+
+void read_Mnist_Label(string filename, vector<double> &labels)
 {
   ifstream file(filename, ios::binary);
   if (file.is_open())
@@ -43,12 +53,12 @@ void read_Mnist_Label(string filename, vector<float> &labels)
     {
       unsigned char label = 0;
       file.read((char *)&label, sizeof(label));
-      labels.push_back((float)label);
+      labels.push_back((double)label);
     }
   }
 }
 
-void read_Mnist_Images(string filename, IdxImageInfo &info, vector<vector<float>> &images)
+void read_Mnist_Images(string filename, IdxImageInfo &info, vector<vector<double>> &images)
 {
   ifstream file(filename, ios::binary);
   if (file.is_open())
@@ -75,14 +85,14 @@ void read_Mnist_Images(string filename, IdxImageInfo &info, vector<vector<float>
     cout << "cols = " << n_cols << endl;
     for (int i = 0; i < number_of_images; i++)
     {
-      vector<float> tp;
+      vector<double> tp;
       for (int r = 0; r < n_rows; r++)
       {
         for (int c = 0; c < n_cols; c++)
         {
           unsigned char image = 0;
           file.read((char *)&image, sizeof(image));
-          float v = (float)((float)((int)image)/256.0f);
+          double v = (double)((double)((int)image) / 256.0f);
           tp.push_back(v);
         }
       }
@@ -91,152 +101,102 @@ void read_Mnist_Images(string filename, IdxImageInfo &info, vector<vector<float>
   }
 }
 
-
-float sigmoid_tanh(float x)
-{
-  float v = tanhf(x);
-  return v;
-}
-
-float dsigmoid_tanh(float x)
-{
-  float d = sigmoid_tanh(x);
-  return 1 - d*d;
-}
-
-float sigmoid(float x)
-{
-  float v = 1 / (1 + expf(-x*1.0f));
-  return v;
-}
-
-float dsigmoid(float x)
-{
-  float d = sigmoid(x);
-  return d * (1 - d);
-}
-
-
-
 void sin_fitting()
 {
-  m_matrix inputData(1, 1);
-  m_matrix resultData(1, 1);
-  m_bp_neural_network bp_network(1, {5}, 1,0.4f,0.0f,0.000f);
+  mat inputData(1, 1);
+  mat resultData(1, 2);
+  m_bp_neural_network bp_network(1, {5, 5, 2}, {"logsig", "logsig", "logsig"});
   bp_network.init();
-  vector<m_matrix> trainInput;
-  vector<m_matrix> trainOutput;
-  for(int i=0;i<=20;i++)
+  vector<mat> trainInput;
+  vector<mat> trainOutput;
+  vector<mat> testInput;
+  vector<mat> testOutput;
+  int sample_num = 20;
+  int test_num = 20;
+  for (int i = 0; i <= sample_num - 1; i++)
   {
-    //inputData.random();
-    inputData.set(0,0,((float)(i)/20));
-    //inputData.set(0,0,0.1f);
-    resultData.set(0, 0, (1+sinf(inputData.get(0,0)*M_PI))/2);
-    //cout<<inputData.get(0,0)<<"=>"<<resultData.get(0,0)<<endl;
+    inputData(0, 0) = (((double)(i) / (sample_num - 1)) - 0.5) * 2;
+    resultData(0, 0) = (1 + sinf(inputData(0, 0) * M_PI)) / 2;
+    resultData(0, 1) = resultData(0, 0);
     trainInput.push_back(inputData);
     trainOutput.push_back(resultData);
   }
-  for (int i = 0; i <10; i++)
+  for (int i = 0; i <= test_num - 1; i++)
   {
-    //cout<<"Train "<<i<<"//////////"<<endl;
-    for(int j=0;j<trainInput.size();j++)
-    {
-      //cout<<"Data "<<trainInput[j].get(0,0)<<"//"<<trainOutput[j].get(0,0)<<"////////"<<endl;
-      m_matrix genr = bp_network.gene(trainInput[j], sigmoid);
-      //cout<<"GeneOut ///////////"<<endl;
-      //genr.print();
-      //bp_network.print();
-      bp_network.back_propagation(trainOutput[j], dsigmoid);
-      //bp_network.print();
-      //return;
-      /*if(j>0 && j%5==0){
-        m_matrix err = bp_network.error();
-        err.print();
-        bp_network.update();
-      }*/
-    }
-    //if(i%100==0)
-    {
-      m_matrix err = bp_network.error();
-      err.print();
-    }
-    bp_network.update();
-    //break;
+    inputData(0, 0) = (((double)(i) / (test_num - 1)) - 0.5) * 2;
+    resultData(0, 0) = (1 + sinf(inputData(0, 0) * M_PI)) / 2;
+    resultData(0, 1) = resultData(0, 0);
+
+    testInput.push_back(inputData);
+    testOutput.push_back(resultData);
   }
-  //return;
-  //bp_network.print();
-  
-  cout<<"TEST ///////////"<<endl;
-  for (int i = 0; i < 10; i++)
+  bp_network.train("traingd", trainInput, trainOutput, 80000, 0.5);
+  for (int i = 0; i < testInput.size(); i++)
   {
-    inputData.random();
-    resultData.set(0, 0, (1+sinf(inputData.get(0,0)*M_PI))/2);
-    bp_network.gene(inputData, sigmoid);
-    m_matrix err = bp_network.error(resultData);
-    //err.filter(abs);
-    err.print();
+    mat re = bp_network.sim(testInput[i]);
+    re.print("Sim");
+    testOutput[i].print();
   }
-  
   //bp_network.print();
 }
 
 void image_fitting()
 {
-  vector<float>labels; 
+  vector<double>labels; 
   read_Mnist_Label("data/train-labels.idx1-ubyte", labels);
-  vector<vector<float>> images;
+  vector<vector<double>> images;
   IdxImageInfo imageInfo;
   read_Mnist_Images("data/train-images.idx3-ubyte",imageInfo, images);
 
 
-  m_bp_neural_network bp_network(784,{32,16},10,0.08f,0.0f,0.001f);
-  m_matrix inputData(784, 1);
-  m_matrix resultData(10, 1);
+  m_bp_neural_network bp_network(784,{32,32,10}, {"logsig", "logsig", "logsig"});
+  mat inputData(1, 784);
+  mat resultData(1, 10);
   bp_network.init();
-  for(int i=0;i<1000;i++)
+  vector<mat> trainInput;
+  vector<mat> trainOutput;
+  vector<mat> testInput;
+  vector<mat> testOutput;
+  vector<int> testLabel;
+  int sample_num = 5000;
+  int test_num = 1000;
+  for (int i = 0; i <= sample_num - 1; i++)
   {
-    for(int j=0;j<1000;j++)
-    {
-      resultData.mul(0);
-      inputData.set_vector(images[j]);
-      int index = labels[j];
-      resultData.set(index,0,1);
-      //resultData.mul(0.1f);
-      m_matrix result = bp_network.gene(inputData,sigmoid_tanh);
-      bp_network.back_propagation(resultData, dsigmoid_tanh);
-      
-    }
-    //if(i%10==0)
-    {
-      m_matrix err = bp_network.error();
-      err.print();
-    }
-    bp_network.update();
-  }
-  cout<<"TEST////////////////////////////////"<<endl;
-  int all = 100;
-  int correct =0;
-  for(int j=10000;j<10000+all;j++)
+    int index = labels[i];
+    inputData = build_mat_by_image(images[i]);
+    resultData.fill(0);
+    resultData(0,index) = 1;
+    trainInput.push_back(inputData);
+    trainOutput.push_back(resultData);
+  } 
+  for (int i = 20000; i <= 20000 + test_num - 1; i++)
   {
-    resultData.mul(0);
-    inputData.set_vector(images[j]);
-    //inputData.print();
-    int index = labels[j];
-    resultData.set(index,0,1);
-    m_matrix result = bp_network.gene(inputData,sigmoid);
-    m_matrix_index_info info = result.max();
-    if(info.x==index)correct++;
-    cout<<index<<endl;
-    result.print();
-    cout<<"Error:"<<bp_network.error_f(resultData)<<endl;
+    int index = labels[i];
+    inputData = build_mat_by_image(images[i]);
+    resultData.fill(0);
+    resultData(0,index) = 1;
+    testInput.push_back(inputData);
+    testOutput.push_back(resultData);
+    testLabel.push_back(index);
   }
-  cout<<"Correct:"<<(float)(correct)/(float)(all)*100.0f<<'%'<<endl;
+  bp_network.train("traingd", trainInput, trainOutput, 10000, 0.5);
+  int correct = 0;
+  for (int i = 0; i < testInput.size(); i++)
+  {
+    mat re = bp_network.sim(testInput[i]);
+    double max1 = re(0,testLabel[i]);
+    double max2 = max(max(re));
+    //cout<<max1<<"/"<<max2<<endl;
+    //re.print("Sim");
+    //testOutput[i].print();
+    if(max1==max2)correct++;
+  }
+  cout<<"Correct:"<<(double)correct/(double)testInput.size()*100<<"%"<<endl;
 }
-
 
 int main()
 {
-  sin_fitting();
-  //image_fitting();
+  //sin_fitting();
+  image_fitting();
   return 0;
 }
