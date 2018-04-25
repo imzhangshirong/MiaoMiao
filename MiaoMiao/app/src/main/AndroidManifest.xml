@@ -19,6 +19,15 @@
             android:name=".Module.Loading.ActivityLoading"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"></activity>
+
+        <activity
+            android:name=".Module.Login.ActivityLogin"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".Module.Register.ActivityRegister"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".Module.Main.ActivityMain"
             android:screenOrientation="portrait"

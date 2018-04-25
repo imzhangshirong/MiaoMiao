@@ -3,6 +3,17 @@
     <color name="colorPrimary">#ffb129</color>
     <color name="colorPrimaryDark">#ffb129</color>
     <color name="colorAccent">#ffb129</color>
+
+    <color name="colorButtonNormal">#ffb129</color>
+    <color name="colorButtonPress">#ffbc46</color>
+    <color name="colorButtonDisable">#a4a4a4</color>
+
+
     <color name="colorFontLight">#ffffff</color>
+    <color name="colorFontLightPress">#88ffffff</color>
+    <color name="colorFontInput">#313131</color>
+    <color name="colorFontInputHint">#979797</color>
+    <color name="colorInputField">#ffffff</color>
+    <color name="colorInputFieldLine">#efefef</color>
     <color name="colorBackground">#f2f2f2</color>
 </resources>

@@ -3,6 +3,7 @@ package com.zhangshirong.miaomiao.Module.Loading;
 import android.os.Bundle;
 
 import com.zhangshirong.miaomiao.ActivityStart;
+import com.zhangshirong.miaomiao.Module.Login.ActivityLogin;
 import com.zhangshirong.miaomiao.Module.Main.ActivityMain;
 import com.zhangshirong.miaomiao.R;
 import com.zhangshirong.miaomiao.Base.View.NActivity;
@@ -31,7 +32,7 @@ public class ActivityLoading extends NActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            startActivity(ActivityMain.class);
+                            startActivity(ActivityLogin.class);
                         }
                     });
                 } catch (InterruptedException e) {

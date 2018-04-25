@@ -1,4 +1,20 @@
 <resources>
     <string name="app_name">描喵</string>
     <string name="app_copyrights">Copyrights ©2018 ZHANGSHIRONG</string>
+
+    <string name="login_nav_title">登录描喵</string>
+    <string name="login_nav_button_register">去注册</string>
+    <string name="login_input_username_digits">abcdefghijklmnopqrstuvwxyz0123456789_.@</string>
+    <string name="login_input_username_hint">邮箱或手机号</string>
+    <string name="login_input_password_hint">密码</string>
+    <string name="login_button_login">登录</string>
+
+    <string name="register_nav_title">用户注册</string>
+    <string name="register_input_email_digits">abcdefghijklmnopqrstuvwxyz0123456789_.@</string>
+    <string name="register_input_nickname_hint">用户昵称</string>
+    <string name="register_input_email_hint">邮箱</string>
+    <string name="register_input_phone_hint">手机号</string>
+    <string name="register_input_password_hint">密码</string>
+    <string name="register_input_cpassword_hint">确认密码</string>
+    <string name="register_button_registe">立即注册</string>
 </resources>
