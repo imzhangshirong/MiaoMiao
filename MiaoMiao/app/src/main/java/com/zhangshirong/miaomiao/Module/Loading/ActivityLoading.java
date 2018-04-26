@@ -1,14 +1,18 @@
 package com.zhangshirong.miaomiao.Module.Loading;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.zhangshirong.miaomiao.ActivityStart;
+import com.zhangshirong.miaomiao.CPPInterface;
 import com.zhangshirong.miaomiao.Module.Login.ActivityLogin;
 import com.zhangshirong.miaomiao.Module.Main.ActivityMain;
 import com.zhangshirong.miaomiao.R;
 import com.zhangshirong.miaomiao.Base.View.NActivity;
 
 public class ActivityLoading extends NActivity {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +24,7 @@ public class ActivityLoading extends NActivity {
     protected void onStart() {
         super.onStart();
         endActivity(ActivityStart.class);
+        Toast.makeText(context, CPPInterface.stringFromJNI(),Toast.LENGTH_LONG).show();
         loadDelay();
     }
 
