@@ -13,7 +13,16 @@
     <color name="colorFontLightPress">#88ffffff</color>
     <color name="colorFontInput">#313131</color>
     <color name="colorFontInputHint">#979797</color>
+    <color name="colorFontNav">#979797</color>
+    <color name="colorFontNavLight">#ffb129</color>
+
+
     <color name="colorInputField">#ffffff</color>
-    <color name="colorInputFieldLine">#efefef</color>
-    <color name="colorBackground">#f2f2f2</color>
+    <color name="colorInputFieldLine">#eaeaea</color>
+    <color name="colorBackground">#efefef</color>
+    <color name="colorNavBackground">#ffffff</color>
+
+    <color name="colorPagerHeaderBackground">#ffffff</color>
+    <color name="colorFontPagerHeader">#313131</color>
+    <color name="colorPagerHeaderBlock">#ffb129</color>
 </resources>

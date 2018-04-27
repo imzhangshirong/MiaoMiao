@@ -103,6 +103,7 @@
                 android:layout_height="40dp" />
         </LinearLayout>
         <Button
+            android:id="@+id/login_button_login"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:textSize="@dimen/textSize"

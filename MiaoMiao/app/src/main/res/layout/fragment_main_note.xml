@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout
+        android:background="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/navHeaderHeight">
+        <LinearLayout
+            android:gravity="left"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="65dp">
+            <TextView
+                android:textSize="@dimen/navTextSize"
+                android:layout_marginRight="20dp"
+                android:text="@string/app_name"
+                android:textColor="@color/colorFontLight"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/navHeaderHeight"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.zhangshirong.miaomiao.Widget.FragmentPagerIndicator
+            android:id="@+id/main_note_main_pager_indicator"
+            android:background="@color/colorPagerHeaderBackground"
+            android:orientation="horizontal"
+            android:tag="skin:colorGongGongPrimary:background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/main_note_pager_miao"
+                android:textColor="@color/colorFontPagerHeader"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="12dp"
+                android:layout_height="wrap_content"
+                android:gravity="center" />
+            <TextView
+                android:text="@string/main_note_pager_note"
+                android:textColor="@color/colorFontPagerHeader"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="12dp"
+                android:layout_height="wrap_content"
+                android:gravity="center" />
+            <TextView
+                android:text="@string/main_note_pager_test"
+                android:textColor="@color/colorFontPagerHeader"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="12dp"
+                android:layout_height="wrap_content"
+                android:gravity="center" />
+        </com.zhangshirong.miaomiao.Widget.FragmentPagerIndicator>
+        <com.zhangshirong.miaomiao.Widget.FragmentPager
+            android:id="@+id/main_note_main_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </com.zhangshirong.miaomiao.Widget.FragmentPager>
+    </LinearLayout>
+    <ImageView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="0dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/logo"
+        android:layout_width="60dp"
+        android:layout_height="60dp" />
+</RelativeLayout>

@@ -12,11 +12,81 @@
         android:background="@color/colorBackground"
         tools:context="com.zhangshirong.miaomiao.Module.Main.ActivityMain">
 
-        <TextView
+        <!--TextView
             android:text="@{userData.greeting}"
             android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent" /-->
+        <FrameLayout
+            android:layout_marginBottom="50dp"
+            android:id="@+id/main_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </FrameLayout>
+
+        <RelativeLayout
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+            <LinearLayout
+                android:background="@color/colorNavBackground"
+                android:layout_alignParentBottom="true"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+                <RelativeLayout
+                    android:layout_marginRight="50dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:translationX="8dp"
+                        android:translationY="-5dp"
+                        android:textSize="@dimen/navBottomTextSize"
+                        android:textColor="@color/colorFontNav"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/main_nav_note"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_marginLeft="50dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:translationX="-8dp"
+                        android:translationY="-5dp"
+                        android:textSize="@dimen/navBottomTextSize"
+                        android:textColor="@color/colorFontNav"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/main_nav_me"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </RelativeLayout>
+            </LinearLayout>
+            <RelativeLayout
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/newnotebg"
+                    android:layout_width="100dp"
+                    android:layout_height="60dp" />
+                <ImageView
+                    android:layout_centerHorizontal="true"
+                    android:translationY="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/newnote"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp" />
+            </RelativeLayout>
+        </RelativeLayout>
     </RelativeLayout>
 </layout>
 

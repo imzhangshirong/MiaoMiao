@@ -8,6 +8,8 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
+import com.zhangshirong.miaomiao.R;
+
 
 /**
  * Created by Jarvis on 2016/8/24.
@@ -27,7 +29,7 @@ public class FragmentPagerIndicator extends PagerIndicator{
 
     public FragmentPagerIndicator(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initView(Color.WHITE);
+        initView(getResources().getColor(R.color.colorPagerHeaderBlock));
 
     }
     private void initView(int color){
@@ -37,7 +39,7 @@ public class FragmentPagerIndicator extends PagerIndicator{
         blockPaint.setStyle(Paint.Style.FILL);
         blockHeight= (int) (3*getResources().getDisplayMetrics().density);
         //blockPadding= (int) (15*app.getResources().getDisplayMetrics().density);
-        blockPadding=0;
+        blockPadding=40;
         for(int a=0;a<this.getChildCount();a++){
             this.getChildAt(a).setClickable(true);
             this.getChildAt(a).setFocusable(true);

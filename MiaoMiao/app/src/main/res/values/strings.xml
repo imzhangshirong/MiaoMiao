@@ -17,4 +17,11 @@
     <string name="register_input_password_hint">密码</string>
     <string name="register_input_cpassword_hint">确认密码</string>
     <string name="register_button_registe">立即注册</string>
+
+    <string name="main_nav_note">笔记</string>
+    <string name="main_nav_me">我</string>
+
+    <string name="main_note_pager_miao">喵</string>
+    <string name="main_note_pager_note">我的笔记</string>
+    <string name="main_note_pager_test">我的测试</string>
 </resources>
