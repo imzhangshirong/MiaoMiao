@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zhangshirong.miaomiao">
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".MiaoMiao"
@@ -16,20 +22,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Module.Loading.ActivityLoading"
+            android:name=".View.Loading.ActivityLoading"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"></activity>
 
         <activity
-            android:name=".Module.Login.ActivityLogin"
+            android:name=".View.Login.ActivityLogin"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"></activity>
         <activity
-            android:name=".Module.Register.ActivityRegister"
+            android:name=".View.Register.ActivityRegister"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"></activity>
         <activity
-            android:name=".Module.Main.ActivityMain"
+            android:name=".View.Main.ActivityMain"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".View.TakeNewNote.ActivityTakeNewNote"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"></activity>
     </application>

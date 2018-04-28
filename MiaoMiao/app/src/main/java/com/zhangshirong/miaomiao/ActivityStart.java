@@ -3,7 +3,7 @@ package com.zhangshirong.miaomiao;
 import android.os.Bundle;
 
 import com.zhangshirong.miaomiao.Base.View.NActivity;
-import com.zhangshirong.miaomiao.Module.Loading.ActivityLoading;
+import com.zhangshirong.miaomiao.View.Loading.ActivityLoading;
 
 public class ActivityStart extends NActivity {
 

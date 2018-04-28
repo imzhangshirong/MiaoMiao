@@ -1,12 +1,11 @@
-package com.zhangshirong.miaomiao.Module.Loading;
+package com.zhangshirong.miaomiao.View.Loading;
 
 import android.os.Bundle;
 import android.widget.Toast;
 
 import com.zhangshirong.miaomiao.ActivityStart;
 import com.zhangshirong.miaomiao.CPPInterface;
-import com.zhangshirong.miaomiao.Module.Login.ActivityLogin;
-import com.zhangshirong.miaomiao.Module.Main.ActivityMain;
+import com.zhangshirong.miaomiao.View.Login.ActivityLogin;
 import com.zhangshirong.miaomiao.R;
 import com.zhangshirong.miaomiao.Base.View.NActivity;
 

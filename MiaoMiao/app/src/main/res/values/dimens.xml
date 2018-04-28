@@ -1,6 +1,6 @@
 <resources>
     <dimen name="textSize">14sp</dimen>
     <dimen name="navTextSize">16sp</dimen>
-    <dimen name="navBottomTextSize">14sp</dimen>
+    <dimen name="navBottomTextSize">12sp</dimen>
     <dimen name="navHeaderHeight">50dp</dimen>
 </resources>

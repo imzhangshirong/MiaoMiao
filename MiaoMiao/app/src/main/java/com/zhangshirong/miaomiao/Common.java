@@ -1,6 +1,7 @@
 package com.zhangshirong.miaomiao;
 
 import android.app.Activity;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.app.Notification;
@@ -57,15 +58,20 @@ import javax.crypto.spec.SecretKeySpec;
  * Created by Jarvis on 2016/8/18.
  */
 public class Common {
+    public static Camera getCameraInstance(){
+        Camera c = null;
+        try {
+            c = Camera.open(); // attempt to get a Camera instance
+        }
+        catch (Exception e){
+            // Camera is not available (in use or does not exist)
+        }
+        return c; // returns null if camera is unavailable
+    }
     /*
     public static boolean isSpecialTheme(String name){
         if(name.length()>8)return (name.substring(0,8).equals("special_"));
         return false;
-    }
-    public static void callPhone(Context context,String phone) {
-        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+phone));
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
     }
     public static int getColorByTheme(GongGong app,String name){
 
@@ -87,111 +93,6 @@ public class Common {
     public static Typeface getIconfontTypeface(Context context){
         return Typeface.createFromAsset(context.getApplicationContext().getAssets(), "fonts/iconfont.ttf");
     }
-
-    public static String getMonthDate(int next,String format){
-        String re="";
-        Calendar cd = Calendar.getInstance();
-        cd.setTimeInMillis(System.currentTimeMillis());
-        int year=cd.get(Calendar.YEAR);
-        int month=cd.get(Calendar.MONTH)+1+next;
-        if(month>12){
-            month-=12;
-            year++;
-        }
-        re=year+"-"+month+"-1 00:00:00";
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-M-d HH:mm:ss");
-        SimpleDateFormat sdfT=new SimpleDateFormat(format);
-        try {
-            Date date=sdf.parse(re);
-            re=sdfT.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return re;
-    }
-    public static String getCardId(String id,boolean isWid){
-        String nid=id;
-        if(nid.length()==19){
-            nid=nid.substring(0,4)+" **** **** ***"+nid.substring(nid.length()-4,nid.length()-3)+" "+nid.substring(nid.length()-3);
-        }
-        if(isWid){
-            String nnid="";
-            for(int a=0;a<nid.length();a++){
-                String temp= String.valueOf(nid.charAt(a))+" ";
-                nnid+=temp;
-            }
-            nnid.replace("  ","   ");
-            nid=nnid;
-        }
-        return nid;
-    }
-
-    public static void cleanNoticeList(Context context){
-        GongGong app= (GongGong) context.getApplicationContext();
-        NotificationManager notiManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        String[] list=app.localSetting.getNoticeList();
-        for(int a=0;a<list.length;a++){
-            try{
-                int temp=Integer.parseInt(list[a]);
-                notiManager.cancel(temp);
-            }
-            catch (Exception e){}
-        }
-        app.localSetting.clearNoticeList();
-    }
-    public static void sendNotice(final Context context, final String title, final String content, final String url){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                GongGong app= (GongGong) context.getApplicationContext();
-                NotificationManager manager=(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                String key=title+"=>"+content;
-                if(app.notificationsNotice.containsKey(key)){
-                    manager.cancel(app.notificationsNotice.get(key));
-                }
-                if(app.localSetting.getNoticeOnce()){
-                    if(app.localSetting.inOnce(key)){
-                        return;
-                    }
-                }
-                app.localSetting.setOnce(key);
-                Notification.Builder builder=new Notification.Builder(context);
-                builder.setContentTitle(title);
-                builder.setContentText(content);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder.setColor(0xf897aa);
-                    builder.setSmallIcon(R.drawable.logo_white);
-                }
-                else{
-                    builder.setSmallIcon(R.mipmap.ic_launcher);
-                }
-                builder.setTicker(title);
-                builder.setDefaults(Notification.DEFAULT_VIBRATE|Notification.DEFAULT_LIGHTS);
-                builder.setWhen(System.currentTimeMillis());
-                Intent notificationIntent =new Intent(context, Web.class);
-                Bundle bundle=new Bundle();
-                bundle.putString("url",url);
-                notificationIntent.putExtras(bundle);
-                PendingIntent contentItent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-                builder.setContentIntent(contentItent);
-                Notification nf=builder.getNotification();
-                nf.flags=Notification.FLAG_AUTO_CANCEL;
-                int id=(int) System.currentTimeMillis()+(int)Math.random()*1000;
-                app.notificationsNotice.put(key,id);
-                app.localSetting.setNoticeList(id);
-                synchronized (context){
-                    try {
-                        manager.notify(id,nf);
-                        context.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-
-
-    }
     public static String decrypt(String key, String str) throws Exception {
         byte[] text64 =Base64.decode(str,Base64.DEFAULT);
         SecretKeySpec newKey = new SecretKeySpec(key.getBytes(), "AES");
@@ -199,229 +100,6 @@ public class Common {
         cipher.init(Cipher.DECRYPT_MODE, newKey);
         byte[] re=cipher.doFinal(text64);
         return new String(re);
-    }
-    public static void sendNotice(final Context context, final String title, final String content, final Class c){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                GongGong app= (GongGong) context.getApplicationContext();
-                NotificationManager manager=(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                String key=title+"=>"+content;
-                if(app.notificationsNotice.containsKey(key)){
-                    manager.cancel(app.notificationsNotice.get(key));
-                }
-                if(app.localSetting.getNoticeOnce()){
-                    if(app.localSetting.inOnce(key)){
-                        return;
-                    }
-                }
-                app.localSetting.setOnce(key);
-                Notification.Builder builder=new Notification.Builder(context);
-                builder.setContentTitle(title);
-                builder.setContentText(content);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder.setColor(0xf897aa);
-                    builder.setSmallIcon(R.drawable.logo_white);
-                }
-                else{
-                    builder.setSmallIcon(R.mipmap.ic_launcher);
-                }
-                builder.setTicker(title);
-                builder.setDefaults(Notification.DEFAULT_VIBRATE|Notification.DEFAULT_LIGHTS);
-                builder.setWhen(System.currentTimeMillis());
-                Intent notificationIntent =new Intent(context, c);
-                PendingIntent contentItent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-                builder.setContentIntent(contentItent);
-                Notification nf=builder.getNotification();
-                nf.flags=Notification.FLAG_AUTO_CANCEL;
-                int id=(int) System.currentTimeMillis()+(int)Math.random()*1000;
-                app.notificationsNotice.put(key,id);
-                app.localSetting.setNoticeList(id);
-                synchronized (context){
-                    try {
-                        manager.notify(id,nf);
-                        context.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-
-
-    }
-    public static Fragment getFragmentByClass(Class source){
-        Fragment f=null;
-        try {
-            source.getDeclaredConstructor().setAccessible(true);
-            f=(Fragment)source.newInstance();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return f;
-    }
-    public static String toDurationTime(int mics){
-        if(mics<=0)return "00:00";
-        int second=(int)((float)mics/1000);
-        int minutes= (int) ((float)second/60);
-        second=second%60;
-        String min=String.valueOf(minutes);
-        String sec=String.valueOf(second);
-        if(min.length()<2)min="0"+min;
-        if(sec.length()<2)sec="0"+sec;
-        return min+":"+sec;
-
-    }
-    public static String getTermString(int id){
-        String re="大";
-        int m= (int) Math.floor(id/ 2);
-        int n=id%2;
-        switch (m+n){
-            case 1:
-                re+="一";
-                break;
-            case 2:
-                re+="二";
-                break;
-            case 3:
-                re+="三";
-                break;
-            case 4:
-                re+="四";
-                break;
-            case 5:
-                re+="五";
-                break;
-            case 6:
-                re+="六";
-                break;
-            case 7:
-                re+="七";
-                break;
-            case 8:
-                re+="八";
-                break;
-        }
-        if(n>0){
-            re+="上";
-        }
-        else{
-            re+="下";
-        }
-        re+="学期";
-        return re;
-    }
-    public static int getDays_MD(String startDay){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
-        int re=0;
-        try {
-            Calendar now=Calendar.getInstance();
-            Date cd = sdf.parse(now.get(Calendar.YEAR)+"-"+startDay);
-            re= (int) ((System.currentTimeMillis()-cd.getTime())/1000/60/60/24);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return re;
-    }
-    public static int getMinutes_MD(String startTime_){
-        String startTime=startTime_;
-        if(startTime.length()<5){
-            startTime="0"+startTime;
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d HH:mm");
-        int re=0;
-        try {
-            Calendar now=Calendar.getInstance();
-            Date cd = sdf.parse(now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.get(Calendar.DAY_OF_MONTH)+" "+startTime);
-            re= (int) ((System.currentTimeMillis()-cd.getTime())/1000/60);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return re;
-    }
-    public static int getDays(String startDay){
-        return getDays(startDay,"yyyy-MM-dd");
-    }
-    public static int getDays(String startDay,String format){
-        SimpleDateFormat sdf = new SimpleDateFormat(format);
-        int re=0;
-        try {
-            Date cd = sdf.parse(startDay);
-            Calendar cld = Calendar.getInstance();
-            cld.setTimeInMillis(System.currentTimeMillis());
-            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyy-M-d");
-            Date cd_ =sdf_.parse(cld.get(Calendar.YEAR)+"-"+(cld.get(Calendar.MONTH)+1)+"-"+cld.get(Calendar.DAY_OF_MONTH));
-            re= (int) ((cd_.getTime()-cd.getTime())/1000/60/60/24);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return re;
-    }
-    public static void setClipboard(Context context,String data){
-        ClipboardManager clip = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
-        clip.setPrimaryClip(ClipData.newPlainText("text",data));
-    }
-    public static Date getDayByAddTimestamp(String start,long timestamp){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date now=new Date();
-        try {
-            Date cd = sdf.parse(start);
-            now.setTime(cd.getTime()+timestamp);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return now;
-    }
-    public static String getCurrentMonthStart(){
-        return getCurrentMonthStart(System.currentTimeMillis());
-    }
-    public static String getCurrentMonthEnd(){
-        return getCurrentMonthEnd(System.currentTimeMillis());
-    }
-    public static String getCurrentMonthStart(long time){
-        SimpleDateFormat sdfy = new SimpleDateFormat("yyyyMM");
-        Date now=new Date(time);
-        return sdfy.format(now)+"01";
-    }
-    public static String getCurrentMonthEnd(long time){
-        String re="";
-        SimpleDateFormat sdfy = new SimpleDateFormat("yyyy");
-        SimpleDateFormat sdfm = new SimpleDateFormat("M");
-        Date now=new Date(time);
-        int tempY=Integer.parseInt(sdfy.format(now));
-        int tempM=Integer.parseInt(sdfm.format(now));
-        if(tempM+1>12){
-            tempY++;
-            tempM=1;
-        }
-        else{
-            tempM++;
-        }
-        String month=String.valueOf(tempM);
-        if(month.length()<2)month="0"+month;
-        String nextmonth=String.valueOf(tempY)+month+"01";
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        try {
-            Date date=sdf.parse(nextmonth);
-            date.setTime(date.getTime()-1000);
-            sdf = new SimpleDateFormat("yyyyMMdd");
-            re=sdf.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return re;
-    }
-    public static void openUrl(Activity activity,String url){
-        Intent mainIntent = new Intent(activity,Web.class);
-        Bundle bundle=new Bundle();
-        bundle.putString("url",url);
-        mainIntent.putExtras(bundle);
-        //mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        activity.startActivity(mainIntent);
     }
     public static String getColorString(int color){
         return String.format("#%06X", 0xFFFFFF & color);
@@ -451,104 +129,6 @@ public class Common {
         sendIntent.setType("text/plain");
         activity.startActivity(Intent.createChooser(sendIntent, "选择分享到的应用"));
         //activity.startActivityForResult(sendIntent, 1);
-    }
-    public static int getTodayWeek(){
-        Date now=new Date(System.currentTimeMillis());
-        Calendar cd=Calendar.getInstance();
-        int week=(cd.get(cd.DAY_OF_WEEK)-1+7)%7;
-        if(week==0)week+=7;
-        return week;
-    }
-    public static String getSectionTime(int section){
-        return getSectionTime(section,false);
-    }
-    public static String getSectionTime(int section,boolean end){
-        final int TIME_MORNING=8*60;
-        final int TIME_COURSE=45;
-        final int TIME_REST_SHORT=10;
-        final int TIME_REST_LONG=30;
-        final int TIME_AFTERNOON;
-        final int TIME_NIGHT;
-        final String TIME_SUMMER="5-1";
-        final String TIME_WINTER="10-1";
-        int a=getDays_MD(TIME_SUMMER);
-        int b=getDays_MD(TIME_WINTER);
-        if(a<0 || b>0){
-            TIME_AFTERNOON=14*60;
-            TIME_NIGHT=19*60;
-        }
-        else{
-            TIME_AFTERNOON=14*60+30;
-            TIME_NIGHT=19*60+30;
-        }
-        int time;
-        if(section<5){
-            time=TIME_MORNING;
-            int c=section;
-            int d=(c-1)/2;
-            time+=(TIME_COURSE+TIME_REST_SHORT)*(c-1)+d*(TIME_REST_LONG-TIME_REST_SHORT);
-        }
-        else if(section<9){
-            time=TIME_AFTERNOON;
-            int c=section-4;
-            int d=(c-1)/2;
-            time+=(TIME_COURSE+TIME_REST_SHORT)*(c-1)+d*(TIME_REST_LONG-TIME_REST_SHORT);
-        }
-        else{
-            time=TIME_NIGHT;
-            int c=section-8;
-            int d=(c-1)/2;
-            time+=(TIME_COURSE+TIME_REST_SHORT)*(c-1);
-        }
-        if (end)time+=45;
-        String h=String.valueOf(time/60);
-        String m=String.valueOf(time%60);
-        if(m.length()<2)m="0"+m;
-        return h+":"+m;
-    }
-    public static void active(Context context,Class className){
-        Intent mainIntent = new Intent(context,className);
-        context.startActivity(mainIntent);
-    }
-    public static void activeAndClear(Context context,Class className){
-        Intent mainIntent = new Intent(context,className);
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        context.startActivity(mainIntent);
-    }
-    public static void activeNewProcess(Context context,Class className){
-        Intent mainIntent = new Intent(context,className);
-        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        context.startActivity(mainIntent);
-    }
-    public static void active(Fragment fragment, Class className, int requestCode){
-        Intent mainIntent = new Intent(fragment.getContext(),className);
-        fragment.startActivityForResult(mainIntent,requestCode);
-    }
-    public static void active(Activity activity, Class className, int requestCode){
-        Intent mainIntent = new Intent(activity,className);
-        activity.startActivityForResult(mainIntent,requestCode);
-    }
-    public static String getNameOfDataId(int dataRid){
-        String re="";
-        switch(dataRid){
-            case R.string.DATA_COURSE:
-                re="课表";
-                break;
-            case R.string.DATA_GRADE:
-                re="查成绩";
-                break;
-            case R.string.DATA_ECARD_INFO:
-            case R.string.DATA_ECARD_BILLING:
-                re="一卡通";
-                break;
-            case R.string.DATA_USERINFO:
-                re="教务/信息门户";
-                break;
-            case R.string.DATA_LIBRARY:
-                re="图书馆";
-                break;
-        }
-        return re;
     }
     public static void swipeRefresh(final SwipeRefreshLayout swipe){
         if(!swipe.isRefreshing()){
@@ -584,48 +164,6 @@ public class Common {
         return version;
 
     }
-
-    public static boolean isUpdate(String local,String update){
-        if(local.isEmpty())return true;
-        String[] acl=local.split("\\.");
-        String[] acu=update.split("\\.");
-        boolean is=false;
-        boolean same=false;
-        int a;
-        for(a=0;a<acl.length && a<acu.length;a++){
-            same=false;
-            if(acu[a].indexOf("_")>-1){
-                acu[a]=acu[a].substring(0,acu[a].indexOf("_"));
-            }
-            if(acl[a].indexOf("_")>-1){
-                acl[a]=acl[a].substring(0,acl[a].indexOf("_"));
-            }
-
-            try{
-                int m=Integer.parseInt(acu[a]);
-                int n=Integer.parseInt(acl[a]);
-                if(m>n){
-                    is=true;
-                    break;
-                }
-                else if(m==n){
-                    same=true;
-                }
-                else{
-                    is=false;
-                    break;
-                }
-            }
-            catch (Exception e){
-                //跳过
-            }
-        }
-        if(acu.length>acl.length && same)is=true;
-        return is;
-    }
-    public static boolean inFilter(String filter,String sid){
-        return sid.matches(filter);
-    }
     public static void setWindowStatusBarColor(Activity activity, String color) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -647,34 +185,6 @@ public class Common {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-    public static String week2chinese(int week){
-        String re="";
-        switch (week){
-            case 1:
-                re="一";
-                break;
-            case 2:
-                re="二";
-                break;
-            case 3:
-                re="三";
-                break;
-            case 4:
-                re="四";
-                break;
-            case 5:
-                re="五";
-                break;
-            case 6:
-                re="六";
-                break;
-            case 7:
-                re="日";
-                break;
-
-        }
-        return re;
     }
     public static int getStatusBarHeight(Context context) {
         int result = 0;
@@ -1097,49 +607,7 @@ public class Common {
         return encode;
     }
 
-    public static void createShortCut(Context context,String title,Class className,int iconResource){
-        //创建快捷方式的Intent
-        Intent shortcutintent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
-        //不允许重复创建
-        shortcutintent.putExtra("duplicate", false);
-        //需要现实的名称
-        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, title);
-        //快捷图片
-        Parcelable icon = Intent.ShortcutIconResource.fromContext(context, iconResource);
-        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
-        //点击快捷图片，运行的程序主入口
-        Intent intent = new Intent(context , className);
-        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, intent);
-        //发送广播。OK
-        context.sendBroadcast(shortcutintent);
-    }
-    public static String getCourseId(JSONObject json,int week){
-        return getCourseId(json,week,true);
-    }
-    public static String getCourseId(JSONObject json,int week,boolean hasSection){
-        String data="";
-        try {
-            data= week+"|"+json.getString("course")+"|"+json.getString("location")+"|"+json.getString("teacher");
-            if(hasSection)data+="|"+json.getString("section_start")+"|"+json.getString("section_end");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return data;
-    }
-    public static void refreshCourseAppWidget(Context context){
-        //更新widget
-        Bundle bundle=new Bundle();
-        bundle.putInt("id",-1);
-        bundle.putInt("pos",-1);
-        Intent intent=new Intent(Config.BROADCAST_EVENT_APPWIDGET_COURSE);
-        intent.putExtras(bundle);
-        context.sendBroadcast(intent);
-    }
-    public static void refreshTimerAppWidget(Context context){
-        //更新widget
-        Intent intent=new Intent(Config.BROADCAST_EVENT_APPWIDGET_TIMER);
-        context.sendBroadcast(intent);
-    }
+
     */
 
 }

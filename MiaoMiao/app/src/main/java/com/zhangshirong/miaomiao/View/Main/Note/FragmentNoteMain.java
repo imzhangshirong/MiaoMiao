@@ -1,4 +1,4 @@
-package com.zhangshirong.miaomiao.Module.Main.Note;
+package com.zhangshirong.miaomiao.View.Main.Note;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,7 +12,6 @@ import com.zhangshirong.miaomiao.Widget.FragmentPager;
 import com.zhangshirong.miaomiao.Widget.FragmentPagerIndicator;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by kyarvis on 18-4-26.

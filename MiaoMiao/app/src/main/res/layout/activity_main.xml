@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorBackground"
-        tools:context="com.zhangshirong.miaomiao.Module.Main.ActivityMain">
+        tools:context="com.zhangshirong.miaomiao.View.Main.ActivityMain">
 
         <!--TextView
             android:text="@{userData.greeting}"
@@ -68,6 +68,7 @@
                 </RelativeLayout>
             </LinearLayout>
             <RelativeLayout
+                android:id="@+id/main_button_takenewnote"
                 android:clickable="true"
                 android:focusable="true"
                 android:layout_centerHorizontal="true"

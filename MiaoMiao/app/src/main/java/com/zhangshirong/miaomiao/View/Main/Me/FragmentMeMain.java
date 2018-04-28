@@ -1,4 +1,4 @@
-package com.zhangshirong.miaomiao.Module.Main.Me;
+package com.zhangshirong.miaomiao.View.Main.Me;
 
 import com.zhangshirong.miaomiao.Base.View.NFragment;
 

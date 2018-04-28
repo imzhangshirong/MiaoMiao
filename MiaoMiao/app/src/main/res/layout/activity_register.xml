@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context="com.zhangshirong.miaomiao.Module.Register.ActivityRegister">
+    tools:context="com.zhangshirong.miaomiao.View.Register.ActivityRegister">
     <RelativeLayout
         android:background="@color/colorPrimary"
         android:layout_width="match_parent"

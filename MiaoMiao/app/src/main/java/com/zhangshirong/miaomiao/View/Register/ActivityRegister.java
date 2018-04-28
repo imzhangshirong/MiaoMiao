@@ -1,4 +1,4 @@
-package com.zhangshirong.miaomiao.Module.Register;
+package com.zhangshirong.miaomiao.View.Register;
 
 import android.os.Bundle;
 

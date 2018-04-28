@@ -1,23 +1,30 @@
-package com.zhangshirong.miaomiao.Module.Main;
+package com.zhangshirong.miaomiao.View.Main;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import com.zhangshirong.miaomiao.Base.View.NFragmentActivity;
 import com.zhangshirong.miaomiao.DataBinding.UserDataVM;
-import com.zhangshirong.miaomiao.Module.Loading.ActivityLoading;
-import com.zhangshirong.miaomiao.Module.Main.Me.FragmentMeMain;
-import com.zhangshirong.miaomiao.Module.Main.Note.FragmentNoteMain;
+import com.zhangshirong.miaomiao.View.Loading.ActivityLoading;
+import com.zhangshirong.miaomiao.View.Main.Me.FragmentMeMain;
+import com.zhangshirong.miaomiao.View.Main.Note.FragmentNoteMain;
 import com.zhangshirong.miaomiao.R;
+import com.zhangshirong.miaomiao.View.TakeNewNote.ActivityTakeNewNote;
 import com.zhangshirong.miaomiao.databinding.ActivityMainBinding;
 
-public class ActivityMain extends NFragmentActivity {
+public class ActivityMain extends NFragmentActivity implements View.OnClickListener {
     private ActivityMainBinding binding;
 
     private FragmentNoteMain fragmentNote;
     private FragmentMeMain fragmentMe;
+
+    private RelativeLayout viewTakeNewNote;
+
     private int position = 0;
 
 
@@ -27,12 +34,21 @@ public class ActivityMain extends NFragmentActivity {
         UserDataVM userData = new UserDataVM();
         binding.setUserData(userData);
         binding.notifyChange();
+
+        initView();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         endActivity(ActivityLoading.class);
+
+
+    }
+
+    private void initView(){
+        viewTakeNewNote = findViewById(R.id.main_button_takenewnote);
+        viewTakeNewNote.setOnClickListener(this);
 
         initFragment();
     }
@@ -84,6 +100,15 @@ public class ActivityMain extends NFragmentActivity {
         }
         if(fragmentMe!=null){
             transaction.hide(fragmentMe);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.main_button_takenewnote:
+                startActivity(ActivityTakeNewNote.class);
+                break;
         }
     }
 }

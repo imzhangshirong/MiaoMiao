@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context="com.zhangshirong.miaomiao.Module.Login.ActivityLogin">
+    tools:context="com.zhangshirong.miaomiao.View.Login.ActivityLogin">
     <View
         android:background="@drawable/loginbg"
         android:layout_width="match_parent"

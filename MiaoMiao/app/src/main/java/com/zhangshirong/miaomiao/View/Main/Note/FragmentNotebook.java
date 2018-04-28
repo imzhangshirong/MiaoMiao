@@ -1,4 +1,4 @@
-package com.zhangshirong.miaomiao.Module.Main.Note;
+package com.zhangshirong.miaomiao.View.Main.Note;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,13 +12,13 @@ import com.zhangshirong.miaomiao.R;
  * Created by kyarvis on 18-4-26.
  */
 
-public class FragmentTest extends NFragment {
+public class FragmentNotebook extends NFragment {
     private View fragmentView;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceStat) {
-        fragmentView = inflater.inflate(R.layout.fragment_main_note_test, container, false);
+        fragmentView = inflater.inflate(R.layout.fragment_main_note_notebook, container, false);
         return fragmentView;
     }
 }

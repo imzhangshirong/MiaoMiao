@@ -1,4 +1,4 @@
-package com.zhangshirong.miaomiao.Module.Main.Note;
+package com.zhangshirong.miaomiao.View.Main.Note;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
