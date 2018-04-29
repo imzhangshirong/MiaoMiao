@@ -143,11 +143,18 @@ public class ActivityMain extends NFragmentActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case Common.REQUEST_TAKE_PHOTO:
-                Debug.Log("PhotoPath:"+curPhotoPath);
                 if(curPhotoPath!=null){
-                    Bundle bundle = new Bundle();
-                    bundle.putString("data",curPhotoPath);
-                    startActivity(ActivityTakeNewNote.class,bundle);
+                    if(resultCode!=0){
+                        Bundle bundle = new Bundle();
+                        bundle.putString("data",curPhotoPath);
+                        startActivity(ActivityTakeNewNote.class,bundle);
+                    }
+                    else{
+                        File file = new File(curPhotoPath);
+                        file.delete();
+                        curPhotoPath = null;
+                    }
+
                 }
 
                 break;
