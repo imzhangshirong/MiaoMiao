@@ -92,7 +92,6 @@ public class FragmentPager extends ViewPager {
             }
         };
         setAdapter(fpa);
-        fpa.
         addOnPageChangeListener(new OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
