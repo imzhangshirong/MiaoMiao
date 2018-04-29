@@ -2,6 +2,7 @@ package com.zhangshirong.miaomiao.Base.View;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
 import java.util.HashMap;
@@ -23,7 +24,12 @@ public class NFragmentActivity extends FragmentActivity {
     }
 
     public void startActivity(Class activity){
+        startActivity(activity,null);
+    }
+
+    public void startActivity(Class activity,Bundle bundle){
         Intent mainIntent = new Intent(context,activity);
+        if(bundle!=null)mainIntent.putExtras(bundle);
         context.startActivity(mainIntent);
     }
     public void endActivity(Class activity){

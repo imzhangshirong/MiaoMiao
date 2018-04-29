@@ -38,10 +38,17 @@ public class FragmentNoteMain extends NFragment {
     @Override
     public void onStart() {
         super.onStart();
+
         fragments.add(new FragmentIndex());
         fragments.add(new FragmentNotebook());
         fragments.add(new FragmentTest());
         viewFragmentPager.init(this,viewFragmentPagerIndicator,fragments);
-
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        viewFragmentPager.refresh();
+    }
+
 }

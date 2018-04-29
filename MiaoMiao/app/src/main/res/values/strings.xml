@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">描喵</string>
     <string name="app_copyrights">Copyrights ©2018 ZHANGSHIRONG</string>
+    <string name="app_package">com.zhangshirong.miaomiao</string>
+    <string name="permission_denied">获取权限失败</string>
 
     <string name="login_nav_title">登录描喵</string>
     <string name="login_nav_button_register">去注册</string>

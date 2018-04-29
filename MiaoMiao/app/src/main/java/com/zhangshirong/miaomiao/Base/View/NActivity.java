@@ -3,6 +3,7 @@ package com.zhangshirong.miaomiao.Base.View;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
 import com.zhangshirong.miaomiao.Base.Debug;
 
@@ -25,7 +26,12 @@ public class NActivity extends Activity {
     }
 
     public void startActivity(Class activity){
+        startActivity(activity,null);
+    }
+
+    public void startActivity(Class activity,Bundle bundle){
         Intent mainIntent = new Intent(context,activity);
+        if(bundle!=null)mainIntent.putExtras(bundle);
         context.startActivity(mainIntent);
     }
 

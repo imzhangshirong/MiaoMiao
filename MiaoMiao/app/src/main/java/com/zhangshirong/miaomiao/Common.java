@@ -1,6 +1,7 @@
 package com.zhangshirong.miaomiao;
 
 import android.app.Activity;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
@@ -38,9 +39,12 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.PublicKey;
 import java.text.ParseException;
@@ -58,6 +62,14 @@ import javax.crypto.spec.SecretKeySpec;
  * Created by Jarvis on 2016/8/18.
  */
 public class Common {
+
+    public static final int REQUEST_TAKE_PHOTO = 1;
+
+
+    public static final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 0;
+    public static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+    public static final int PERMISSION_REQUEST_CAMERA = 2;
+
     public static Camera getCameraInstance(){
         Camera c = null;
         try {
@@ -68,6 +80,7 @@ public class Common {
         }
         return c; // returns null if camera is unavailable
     }
+
     /*
     public static boolean isSpecialTheme(String name){
         if(name.length()>8)return (name.substring(0,8).equals("special_"));

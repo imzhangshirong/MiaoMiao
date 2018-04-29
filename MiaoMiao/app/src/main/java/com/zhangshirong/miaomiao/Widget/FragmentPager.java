@@ -46,6 +46,7 @@ public class FragmentPager extends ViewPager {
         this.fragments=fragments;
         initIndicator();
         FragmentManager fm=fragmentActivity.getSupportFragmentManager();
+        fm.
         initEvent(fm);
     }
     private void initIndicator(){
@@ -91,6 +92,7 @@ public class FragmentPager extends ViewPager {
             }
         };
         setAdapter(fpa);
+        fpa.
         addOnPageChangeListener(new OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -128,5 +130,9 @@ public class FragmentPager extends ViewPager {
         initIndicator();
         FragmentManager fm=fragment.getChildFragmentManager();//注意这里用getFragmentManager在再次加载父Fragment后会导致Fragment初始化失败
         initEvent(fm);
+    }
+
+    public void refresh(){
+        getAdapter().notifyDataSetChanged();
     }
 }

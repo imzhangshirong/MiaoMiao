@@ -16,6 +16,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback{
     private SurfaceHolder mHolder;
     private Camera mCamera;
     private int mDegree=90;
+    public Point size;
 
     public CameraView(Context context, Camera camera) {
         super(context);
@@ -73,7 +74,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback{
             Camera.Parameters parameters = mCamera.getParameters();
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
             parameters.setRotation(mDegree);
-            parameters.setPreviewSize(w,h);
+            parameters.setPreviewSize(size.x,size.y);
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
 
@@ -81,4 +82,5 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback{
             Debug.Error("Error setting camera preview: " + e.getMessage());
         }
     }
+
 }
