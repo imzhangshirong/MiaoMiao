@@ -29,26 +29,26 @@ public class FragmentNoteMain extends NFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceStat) {
         fragmentView = inflater.inflate(R.layout.fragment_main_note, container, false);
 
-        viewFragmentPagerIndicator = fragmentView.findViewById(R.id.main_note_main_pager_indicator);
-        viewFragmentPager = fragmentView.findViewById(R.id.main_note_main_pager);
+
+        initView();
+
 
         return fragmentView;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
+    private void initView(){
+        viewFragmentPagerIndicator = fragmentView.findViewById(R.id.main_note_main_pager_indicator);
+        viewFragmentPager = fragmentView.findViewById(R.id.main_note_main_pager);
         fragments.add(new FragmentIndex());
         fragments.add(new FragmentNotebook());
         fragments.add(new FragmentTest());
         viewFragmentPager.init(this,viewFragmentPagerIndicator,fragments);
     }
 
+
     @Override
-    public void onResume() {
-        super.onResume();
-        viewFragmentPager.refresh();
+    public void onStart() {
+        super.onStart();
     }
 
 }

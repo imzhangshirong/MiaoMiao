@@ -46,9 +46,10 @@ public class FragmentPager extends ViewPager {
         this.fragments=fragments;
         initIndicator();
         FragmentManager fm=fragmentActivity.getSupportFragmentManager();
-        fm.
         initEvent(fm);
     }
+
+
     private void initIndicator(){
         this.pagerIndicator.setData(fragments);
         for(int a=0;a<this.pagerIndicator.getChildCount();a++){
@@ -129,9 +130,5 @@ public class FragmentPager extends ViewPager {
         initIndicator();
         FragmentManager fm=fragment.getChildFragmentManager();//注意这里用getFragmentManager在再次加载父Fragment后会导致Fragment初始化失败
         initEvent(fm);
-    }
-
-    public void refresh(){
-        getAdapter().notifyDataSetChanged();
     }
 }
