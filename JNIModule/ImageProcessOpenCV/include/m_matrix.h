@@ -12,8 +12,10 @@ using namespace cv;
 class m_matrix
 {
   public:
-    static Mat filter(Mat &mat, float (*func)(int, int, float));
+    static Mat filter(Mat &mat, float (*func)(Mat,int, int, float));
     static Mat conv(Mat &mat, Mat &matConv);
+    static Mat to8UC1(Mat &mat,float max);
+    static Mat to8UC3(Mat &mat,float max);
 };
 
 #endif

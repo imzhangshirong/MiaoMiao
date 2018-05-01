@@ -3,18 +3,48 @@
 using namespace cv;
 using namespace std;
 
-Mat m_matrix::filter(Mat &mat, float (*func)(int, int, float))
+Mat m_matrix::filter(Mat &mat, float (*func)(Mat,int, int, float))
 {
     Mat re = Mat_<float>::zeros(mat.rows, mat.cols);
     for (int i = 0; i < mat.rows; i++)
     {
         for (int j = 0; j < mat.cols; j++)
         {
-            re.at<float>(i, j) = func(i, j, mat.at<float>(i, j));
+            re.at<float>(i, j) = func(mat,i, j, mat.at<float>(i, j));
         }
     }
     return re;
 }
+
+Mat m_matrix::to8UC1(Mat &mat,float max)
+{
+    Mat re(mat.rows, mat.cols,CV_8UC1);
+    for (int i = 0; i < mat.rows; i++)
+    {
+        for (int j = 0; j < mat.cols; j++)
+        {
+            re.at<unsigned char>(i, j) = (int)(mat.at<float>(i, j)/max*255);
+        }
+    }
+    return re;
+}
+Mat m_matrix::to8UC3(Mat &mat,float max)
+{
+    Mat re(mat.rows, mat.cols,CV_8UC3);
+    for (int i = 0; i < mat.rows; i++)
+    {
+        for (int j = 0; j < mat.cols; j++)
+        {
+            int v = (int)(mat.at<float>(i, j)/max*255);
+            Vec3b v3b =re.at<Vec3b>(i, j); 
+            v3b[0]=v;
+            v3b[1]=v;
+            v3b[2]=v;
+        }
+    }
+    return re;
+}
+
 
 Mat m_matrix::conv(Mat &mat, Mat &matConv)
 {
