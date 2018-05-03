@@ -3,43 +3,51 @@
 using namespace cv;
 using namespace std;
 
-Mat m_matrix::filter(Mat &mat, float (*func)(Mat,int, int, float))
+Mat m_matrix::filter(Mat &mat, double (*func)(Mat,int, int, double))
 {
-    Mat re = Mat_<float>::zeros(mat.rows, mat.cols);
+    Mat re = Mat_<double>::zeros(mat.rows, mat.cols);
     for (int i = 0; i < mat.rows; i++)
     {
         for (int j = 0; j < mat.cols; j++)
         {
-            re.at<float>(i, j) = func(mat,i, j, mat.at<float>(i, j));
+            re.at<double>(i, j) = func(mat,i, j, mat.at<double>(i, j));
         }
     }
     return re;
 }
 
-Mat m_matrix::to8UC1(Mat &mat,float max)
+Mat m_matrix::to8UC1(Mat &mat)
 {
+    double min, max;
+    minMaxLoc(mat, &min, &max);
+    double d = max-min;
+    
     Mat re(mat.rows, mat.cols,CV_8UC1);
     for (int i = 0; i < mat.rows; i++)
     {
         for (int j = 0; j < mat.cols; j++)
         {
-            re.at<unsigned char>(i, j) = (int)(mat.at<float>(i, j)/max*255);
+            re.at<unsigned char>(i, j) = (int)((mat.at<double>(i, j)-min)/d*255);
         }
     }
     return re;
 }
-Mat m_matrix::to8UC3(Mat &mat,float max)
+Mat m_matrix::to8UC3(Mat &mat)
 {
+    double min, max;
+    minMaxLoc(mat, &min, &max);
+    double d = max-min;
     Mat re(mat.rows, mat.cols,CV_8UC3);
     for (int i = 0; i < mat.rows; i++)
     {
         for (int j = 0; j < mat.cols; j++)
         {
-            int v = (int)(mat.at<float>(i, j)/max*255);
-            Vec3b v3b =re.at<Vec3b>(i, j); 
+            int v = (int)((mat.at<double>(i, j)-min)/d*255);
+            Vec3b v3b=re.at<Vec3b>(i, j); 
             v3b[0]=v;
             v3b[1]=v;
             v3b[2]=v;
+            re.at<Vec3b>(i, j)=v3b;
         }
     }
     return re;
@@ -49,7 +57,7 @@ Mat m_matrix::to8UC3(Mat &mat,float max)
 Mat m_matrix::conv(Mat &mat, Mat &matConv)
 {
     int half = matConv.rows / 2;
-    Mat re = Mat_<float>::zeros(mat.rows, mat.cols);
+    Mat re = Mat_<double>::zeros(mat.rows, mat.cols);
     int base_x = 0;
     int base_y = 0;
     int x = 0;
@@ -58,7 +66,7 @@ Mat m_matrix::conv(Mat &mat, Mat &matConv)
     {
         for (int j = 0; j < mat.cols; j++)
         {
-            float temp = 0.0f;
+            double temp = 0.0f;
             for (int k = 0; k < matConv.rows; k++)
             {
                 for (int l = 0; l < matConv.cols; l++)
@@ -67,11 +75,11 @@ Mat m_matrix::conv(Mat &mat, Mat &matConv)
                     y = base_y + k - half;
                     if (x >= 0 && y >= 0 && x < mat.cols && y < mat.rows)
                     {
-                        temp += mat.at<float>(y, x) * matConv.at<float>(k, l);
+                        temp += mat.at<double>(y, x) * matConv.at<double>(k, l);
                     }
                 }
             }
-            re.at<float>(i, j) = temp;
+            re.at<double>(i, j) = temp;
             base_x++;
         }
         base_x = 0;
@@ -95,13 +103,13 @@ m_matrix m_matrix::conv_scale(m_matrix &matrix)
         x = 0;
         for (int j = 0; j < re.width; j++)
         {
-            float temp = 0.0f;
+            double temp = 0.0f;
             y = 0;
             for (int k = 0; k < matrix.height; k++)
             {
                 for (int l = 0; l < matrix.width; l++)
                 {
-                    float curValue = *(this->m_map + cur + y + x + l);
+                    double curValue = *(this->m_map + cur + y + x + l);
                     temp += matrix.get(l, k) * curValue;
                 }
                 y += this->width;

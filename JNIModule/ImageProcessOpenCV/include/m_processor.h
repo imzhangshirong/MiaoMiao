@@ -7,7 +7,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core.hpp>
 
-#include "m_domain.h"
 
 using namespace cv;
 
@@ -15,6 +14,6 @@ class m_processor
 {
 public:
   static Mat prewitt(Mat &gray_img);
-  static vector<m_domain> bwlabel(Mat &matrix, float threshold);
+  static Mat fft2(Mat &img);
 };
 #endif
