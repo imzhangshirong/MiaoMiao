@@ -1,4 +1,4 @@
-package dbuntil
+package DBUtil
 
 import(
 	//"fmt"
@@ -7,26 +7,40 @@ import(
 	"reflect"
 
 	_ "github.com/go-sql-driver/mysql"
+
+	common "package/common"
 )
 
-type DBUntil struct{
+type DBUtil struct{
 	Error error
 	Conn *sql.DB
+	host string
+	port int
+	user string
+	password string
+	database string
+	charset string
 }
 
 func init(){
 
 }
 
-func (p *DBUntil) Init()(*DBUntil){
+func (p *DBUtil) Init(host string,port int,user string,password string,database string,charset string)(*DBUtil){
+	p.host = host
+	p.port = port
+	p.user = user
+	p.password = password
+	p.database = database
+	p.charset = charset
 	return p
 }
 
-func (p *DBUntil) Open(host string,port int,user string,password string,database string,charset string) error{
-	con:=user+":"+password
-	con+="@tcp("+host+":"+strconv.Itoa(port)+")"
-	con+="/"+database
-	con+="?charset="+charset
+func (p *DBUtil) Open() error{
+	con:=p.user+":"+p.password
+	con+="@tcp("+p.host+":"+strconv.Itoa(p.port)+")"
+	con+="/"+p.database
+	con+="?charset="+p.charset
 	//fmt.Println(con)
 	db,err:=sql.Open("mysql",con)
 	if err!=nil {
@@ -38,31 +52,9 @@ func (p *DBUntil) Open(host string,port int,user string,password string,database
 	return p.Error
 }
 
-func Convert(str string,tarType reflect.Type) interface{}{
-	dtype:=tarType.Name()
-	var re interface{} = str
-	switch dtype {
-	case "int":
-		re,_ = strconv.Atoi(str)
-	case "int8":
-		re,_ = strconv.ParseInt(str,10,8)
-	case "int16":
-		re,_ = strconv.ParseInt(str,10,16)
-	case "int32":
-		re,_ = strconv.ParseInt(str,10,32)
-	case "int64":
-		re,_ = strconv.ParseInt(str,10,64)
-	case "float32":
-		re,_ = strconv.ParseFloat(str,32)
-	case "float64":
-		re,_ = strconv.ParseFloat(str,64)
-	case "bool":
-		re,_ = strconv.ParseBool(str)
-	}
-	return re
-}
 
-func (p *DBUntil) Quary(quary string,dataType interface{}, args ...interface{})([]interface{},error){
+
+func (p *DBUtil) Quary(quary string,dataType interface{}, args ...interface{})([]interface{},error){
 	var result []interface{}
 	if p.Conn!=nil {
 		var rows *sql.Rows
@@ -90,7 +82,7 @@ func (p *DBUntil) Quary(quary string,dataType interface{}, args ...interface{})(
 					rows.Scan(ptr...)
 					entry := reflect.New(dtype).Elem()
 					for i:=0;i<ccount && i<entry.NumField();i++ {
-						entry.Field(i).Set(reflect.ValueOf(Convert(values[i],entry.Field(i).Type())))
+						entry.Field(i).Set(reflect.ValueOf(common.Convert(values[i],entry.Field(i).Type())))
 					}
 					result = append(result,entry.Interface())
 				}
@@ -103,6 +95,6 @@ func (p *DBUntil) Quary(quary string,dataType interface{}, args ...interface{})(
 
 
 
-func (p *DBUntil) Exec(quary string,args ...interface{}){
+func (p *DBUtil) Exec(quary string,args ...interface{}){
 	//p.Conn.Exec()
 }

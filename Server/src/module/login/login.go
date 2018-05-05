@@ -1,7 +1,7 @@
 package login
 
 import(
-	config "config"
+	app "app"
 	debug "package/debug"
 	api "package/api"
 )
@@ -11,10 +11,22 @@ func init(){
 }
 
 func Login(request *api.ApiRequest,response *api.ApiResponse){
-	debug.Log("login")
-	response.Header.Set("token","ac5d706b900c087f0e3")
+	session:=app.SessionManager.GetFromClient(response.Writer,request.Request)
+	defer func(){
+		if session.Modified {
+			app.SessionManager.Save(session)
+		}
+	}()
+	var name string
+	if v := session.Get("name");v!=nil{
+		name = v.(string)
+		session.Set("name",name + "hello")
+	}else{
+		session.Set("name","hello")
+	}
+	debug.Log("login:"+session.Sid)
 	response.HttpCode = 303
-	response.ErrorCode = -1
-	response.Message = config.Error.GetErrorCodeMessage(response.ErrorCode)
+	response.ErrorCode = 0
+	response.Message = name
 }
 

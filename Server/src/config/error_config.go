@@ -9,7 +9,7 @@ func (p *ErrorConfig) Init()(*ErrorConfig){
 	p.errorInfo = make(map[int]string)
 
 	p.errorInfo[0] = "Successed"
-	p.errorInfo[-1] = "Error!!!!!!"
+	p.errorInfo[-1] = "Server Error"
 	
 	return p
 }

@@ -8,6 +8,7 @@ import(
 )
 
 type ApiResponse struct{
+	Writer http.ResponseWriter
 	Header *http.Header
 	HttpCode int
 	ErrorCode int

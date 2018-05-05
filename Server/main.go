@@ -2,7 +2,7 @@ package main
 
 import (
 	//"net/http"
-	//"strconv"
+	"strconv"
 
 
 	app "app"
@@ -18,28 +18,21 @@ type UserData struct{
 }
 
 func main() {
-	debug.Info("server running...")
-	app.DBUntil.Open(
-		config.MySql.Host,
-		config.MySql.Port,
-		config.MySql.User,
-		config.MySql.Password,
-		config.MySql.Database,
-		config.MySql.Charset)
-	userData,err := app.DBUntil.Quary("SELECT * FROM `user` WHERE `id` = ?",UserData{},1)
-	if err == nil {
-		for _,v := range userData{
-			data := v.(UserData)
-			debug.Log(data.Username)
-		}
-	}else{
-		debug.Error(err.Error())
-	}
-
-	debug.Info("binding router...")
+	debug.Info("Server running...")
+	//----------------------------------
+	debug.Info("Connect To Database...")
+	app.DBUtil.Open()
+	//----------------------------------
+	debug.Info("Import Session...")
+	app.SessionManager.ImportSession()
+	app.SessionManager.Clean()
+	app.SessionManager.AutoClean()
+	//----------------------------------
+	debug.Info("Binding router...")
 	bindHandle()
-	debug.Info("listening...")
-	app.Router.Listen(config.Server.Host,config.Server.Port)
+	//----------------------------------
+	debug.Info("Listening... "+config.Server.Host+":"+strconv.Itoa(config.Server.Port))
+	app.Router.Listen()
 }
 
 func bindHandle(){
