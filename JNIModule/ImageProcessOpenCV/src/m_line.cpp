@@ -54,8 +54,9 @@ Point2d m_line::intersection(m_line &line){
 
     double d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
     // If d is zero, there is no intersection
-    if (d == 0)
-        return ret;
+    if (d == 0){
+        d=0.0000001;
+    }
 
     // Get the x and y
     double pre = (x1 * y2 - y1 * x2), post = (x3 * y4 - y3 * x4);
