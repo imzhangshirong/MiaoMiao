@@ -5,6 +5,7 @@ import(
 	"strconv"
 	"database/sql"
 	"reflect"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -54,7 +55,7 @@ func (p *DBUtil) Open() error{
 
 
 
-func (p *DBUtil) Quary(quary string,dataType interface{}, args ...interface{})([]interface{},error){
+func (p *DBUtil) Query(quary string,dataType interface{}, args ...interface{})([]interface{},error){
 	var result []interface{}
 	if p.Conn!=nil {
 		var rows *sql.Rows
@@ -67,6 +68,9 @@ func (p *DBUtil) Quary(quary string,dataType interface{}, args ...interface{})([
 		if err!=nil {
 			p.Error = err
 		} else{
+			if dataType == nil {
+				return result,nil
+			}
 			columns,err:= rows.Columns()
 			if err!=nil {
 				p.Error = err
@@ -81,9 +85,15 @@ func (p *DBUtil) Quary(quary string,dataType interface{}, args ...interface{})([
 					}
 					rows.Scan(ptr...)
 					entry := reflect.New(dtype).Elem()
-					for i:=0;i<ccount && i<entry.NumField();i++ {
-						entry.Field(i).Set(reflect.ValueOf(common.Convert(values[i],entry.Field(i).Type())))
+					for i := 0; i < ccount; i++ {
+						for j:=0;j<entry.NumField();j++ {
+							if strings.ToLower(dtype.Field(j).Name) == strings.ToLower(columns[i]) {
+								entry.Field(j).Set(reflect.ValueOf(common.Convert(values[j],entry.Field(j).Type())))
+								break
+							}
+						}
 					}
+					
 					result = append(result,entry.Interface())
 				}
 				p.Error = nil
@@ -91,10 +101,4 @@ func (p *DBUtil) Quary(quary string,dataType interface{}, args ...interface{})([
 		}
 	}
 	return result,p.Error
-}
-
-
-
-func (p *DBUtil) Exec(quary string,args ...interface{}){
-	//p.Conn.Exec()
 }

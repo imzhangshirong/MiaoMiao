@@ -15,8 +15,6 @@ import(
 	debug "package/debug"
 )
 
-
-
 func ExecShell(command string)(string,error){
     cmd := exec.Command("/bin/bash", "-c", command)
     var out bytes.Buffer

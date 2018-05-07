@@ -8,8 +8,10 @@ type ErrorConfig struct{
 func (p *ErrorConfig) Init()(*ErrorConfig){
 	p.errorInfo = make(map[int]string)
 
-	p.errorInfo[0] = "Successed"
+	p.errorInfo[-2] = "Api Auth Failed"
 	p.errorInfo[-1] = "Server Error"
+	p.errorInfo[0] = "Successed"
+	p.errorInfo[1] = "Token Timeout"
 	
 	return p
 }
