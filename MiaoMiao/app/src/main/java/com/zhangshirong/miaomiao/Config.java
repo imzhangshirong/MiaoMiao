@@ -10,6 +10,7 @@ public class Config {
     public static String APPID = "";
     public static String APP_PACKAGE = "com.zhangshirong.miaomiao";
     public static String APP_ROOT_PATH = "MiaoMiao/";
+    public static String APP_ICONFONT = "fonts/iconfont.ttf";
 
 
     public static int API_CONNECT_TIMEOUT = 10000;

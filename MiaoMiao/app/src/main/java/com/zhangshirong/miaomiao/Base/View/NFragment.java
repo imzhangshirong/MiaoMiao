@@ -10,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.zhangshirong.miaomiao.MiaoMiao;
+import com.zhangshirong.miaomiao.Widget.Iconfont;
+
 /**
  * Created by kyarvis on 18-4-15.
  */
@@ -21,7 +24,9 @@ public class NFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         context = getContext();
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        Iconfont.apply(view, MiaoMiao.iconfont);
+        return view;
     }
 
     public void startActivity(Class activity){

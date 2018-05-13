@@ -69,6 +69,10 @@ public class Common {
     public static final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 0;
     public static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     public static final int PERMISSION_REQUEST_CAMERA = 2;
+    static String[] mon = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+    public static String getMonthName(int month){
+        return mon[month-1];
+    }
 
     public static Camera getCameraInstance(){
         Camera c = null;

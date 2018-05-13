@@ -7,13 +7,13 @@ import android.util.Log;
  */
 
 public class Debug {
-    public static void Log(Object message){
+    public static void log(Object message){
         Log.d("DebugLog",message.toString());
     }
-    public static void Error(Object message){
+    public static void error(Object message){
         Log.e("DebugLog",message.toString());
     }
-    public static void Warning(Object message){
+    public static void warning(Object message){
         Log.w("DebugLog",message.toString());
     }
 }

@@ -4,6 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.zhangshirong.miaomiao.MiaoMiao;
+import com.zhangshirong.miaomiao.Widget.Iconfont;
 
 import java.util.HashMap;
 
@@ -19,6 +24,8 @@ public class NFragmentActivity extends FragmentActivity {
     protected void onStart() {
         activityMap.put(this.getClass(),this);
         this.context = getBaseContext();
+        View view = ((ViewGroup)findViewById(android.R.id.content)).getChildAt(0);
+        Iconfont.apply(view, MiaoMiao.iconfont);
         super.onStart();
 
     }

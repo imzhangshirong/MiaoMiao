@@ -13,7 +13,7 @@
     <color name="colorFontLightPress">#88ffffff</color>
     <color name="colorFontInput">#313131</color>
     <color name="colorFontInputHint">#979797</color>
-    <color name="colorFontNav">#979797</color>
+    <color name="colorFontNav">#b5b5b5</color>
     <color name="colorFontNavLight">#ffb129</color>
 
 
@@ -25,4 +25,11 @@
     <color name="colorPagerHeaderBackground">#ffffff</color>
     <color name="colorFontPagerHeader">#313131</color>
     <color name="colorPagerHeaderBlock">#ffb129</color>
+
+    <color name="colorNoteBlockDaytext">#ffb129</color>
+    <color name="colorNoteBlockNotecount">#48c3f1</color>
+    <color name="colorNoteBlockTestcount">#6cd197</color>
+
+    <color name="colorProgressBackground">#11000000</color>
+    <color name="colorProgressFrontground">#ffffff</color>
 </resources>

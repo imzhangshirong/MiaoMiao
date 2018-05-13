@@ -27,4 +27,29 @@ public class LocalDataProxy extends NProxy {
     public void onRemove() {
         super.onRemove();
     }
+
+    public void saveNoteData(){
+
+    }
+    public void saveUserData(){
+
+    }
+    public void saveTestData(){
+
+    }
+    public void saveAPIsData(){
+
+    }
+    public void loadNoteData(){
+
+    }
+    public void loadUserData(){
+
+    }
+    public void loadTestData(){
+
+    }
+    public void loadAPIsData(){
+
+    }
 }

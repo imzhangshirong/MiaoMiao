@@ -1,11 +1,236 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorBackground">
-    <TextView
-        android:gravity="center"
-        android:text="@string/main_note_pager_miao"
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable name="MainNoteIndexVM" type="com.zhangshirong.miaomiao.DataBinding.MainNoteIndexVM"/>
+    </data>
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</RelativeLayout>
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground">
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                    android:background="@color/colorBackground">
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:background="@drawable/block_daytext"
+                        android:padding="12dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:layout_marginBottom="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_marginRight="5dp"
+                                android:textStyle="bold"
+                                android:text="@{String.valueOf(MainNoteIndexVM.day)}"
+                                android:textSize="30sp"
+                                android:textColor="@color/colorFontLight"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:text="@{MainNoteIndexVM.month}"
+                                android:textSize="20sp"
+                                android:textColor="@color/colorFontLight"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+                        <TextView
+                            android:textSize="12sp"
+                            android:textColor="@color/colorFontLight"
+                            android:text="@string/main_note_miao_daytext"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:background="@drawable/block_notecount"
+                        android:padding="12dp"
+                        android:gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:src="@drawable/main_note_block_notecount"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp" />
+                        <LinearLayout
+                            android:layout_weight="1"
+                            android:gravity="right"
+                            android:orientation="horizontal"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:textSize="16sp"
+                                android:textColor="@color/colorFontLight"
+                                android:text="共"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:layout_marginRight="5dp"
+                                android:layout_marginLeft="5dp"
+                                android:textSize="26sp"
+                                android:textColor="@color/colorFontLight"
+                                android:text="@{String.valueOf(MainNoteIndexVM.noteCount)}"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:textSize="16sp"
+                                android:textColor="@color/colorFontLight"
+                                android:text="本笔记，"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:layout_marginRight="5dp"
+                                android:layout_marginLeft="5dp"
+                                android:textSize="26sp"
+                                android:textColor="@color/colorFontLight"
+                                android:text="@{String.valueOf(MainNoteIndexVM.notePagesCount)}"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:textSize="16sp"
+                                android:textColor="@color/colorFontLight"
+                                android:text="页"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:background="@drawable/block_testcount"
+                        android:padding="12dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:layout_marginBottom="12dp"
+                            android:orientation="horizontal"
+                            android:gravity="bottom"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <ImageView
+                                android:src="@drawable/main_note_block_testcount"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp" />
+                            <LinearLayout
+                                android:layout_weight="1"
+                                android:gravity="right"
+                                android:orientation="horizontal"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:textSize="16sp"
+                                    android:textColor="@color/colorFontLight"
+                                    android:text="最近测试"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                                <TextView
+                                    android:layout_marginRight="5dp"
+                                    android:layout_marginLeft="5dp"
+                                    android:textSize="26sp"
+                                    android:textColor="@color/colorFontLight"
+                                    android:text="78"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                                <TextView
+                                    android:textSize="16sp"
+                                    android:textColor="@color/colorFontLight"
+                                    android:text="分"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_marginBottom="5dp"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:layout_marginBottom="5dp"
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:textColor="@color/colorFontLight"
+                                    android:text="高等数学"
+                                    android:textSize="16sp"
+                                    android:layout_weight="1"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content" />
+                                <TextView
+                                    android:textColor="@color/colorFontLight"
+                                    android:text="82%"
+                                    android:textSize="16sp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                            </LinearLayout>
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <RelativeLayout
+                                    android:background="@drawable/progress_bg"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="8dp"/>
+                                <RelativeLayout
+                                    android:background="@drawable/progress_fg"
+                                    android:layout_width="80dp"
+                                    android:layout_height="8dp"/>
+                            </RelativeLayout>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_marginBottom="5dp"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:layout_marginBottom="5dp"
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:textColor="@color/colorFontLight"
+                                    android:text="计算机组成原理"
+                                    android:textSize="16sp"
+                                    android:layout_weight="1"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content" />
+                                <TextView
+                                    android:textColor="@color/colorFontLight"
+                                    android:text="51%"
+                                    android:textSize="16sp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                            </LinearLayout>
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <RelativeLayout
+                                    android:background="@drawable/progress_bg"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="8dp"/>
+                                <RelativeLayout
+                                    android:background="@drawable/progress_fg"
+                                    android:layout_width="180dp"
+                                    android:layout_height="8dp"/>
+                            </RelativeLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </LinearLayout>
+</layout>
+

@@ -40,7 +40,7 @@ public class CameraPreview extends FrameLayout {
             float k = (float)height/(float)width;
             mCameraView.size = findBestPreviewSizeValue(mCamera.getParameters().getSupportedPreviewSizes(),k);
             int height2 = width*mCameraView.size.x/mCameraView.size.y;
-            Debug.Log(width+"//////////"+height2);
+            Debug.log(width+"//////////"+height2);
             lp.width = width;
             lp.height = height2;
             setLayoutParams(lp);

@@ -4,8 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,46 +14,44 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zhangshirong.miaomiao.Base.Debug;
 import com.zhangshirong.miaomiao.Base.View.NFragmentActivity;
 import com.zhangshirong.miaomiao.Common;
 import com.zhangshirong.miaomiao.Config;
-import com.zhangshirong.miaomiao.DataBinding.UserDataVM;
 import com.zhangshirong.miaomiao.View.Loading.ActivityLoading;
 import com.zhangshirong.miaomiao.View.Main.Me.FragmentMeMain;
 import com.zhangshirong.miaomiao.View.Main.Note.FragmentNoteMain;
 import com.zhangshirong.miaomiao.R;
 import com.zhangshirong.miaomiao.View.TakeNewNote.ActivityTakeNewNote;
-import com.zhangshirong.miaomiao.databinding.ActivityMainBinding;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Permission;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ActivityMain extends NFragmentActivity implements View.OnClickListener {
-    private ActivityMainBinding binding;
 
     private FragmentNoteMain fragmentNote;
     private FragmentMeMain fragmentMe;
 
-    private RelativeLayout viewTakeNewNote;
+    private RelativeLayout viewNavTakeNewNote;
+    private RelativeLayout viewNavNote;
+    private RelativeLayout viewNavMe;
+    private TextView viewNavNoteIcon;
+    private TextView viewNavNoteText;
+    private TextView viewNavMeIcon;
+    private TextView viewNavMeText;
 
-    private int position = 0;
+    private int position =0;
     private String curPhotoPath;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        UserDataVM userData = new UserDataVM();
-        binding.setUserData(userData);
-        binding.notifyChange();
-
+        setContentView(R.layout.activity_main);
         initView();
     }
 
@@ -72,8 +68,19 @@ public class ActivityMain extends NFragmentActivity implements View.OnClickListe
     }
 
     private void initView(){
-        viewTakeNewNote = findViewById(R.id.main_button_takenewnote);
-        viewTakeNewNote.setOnClickListener(this);
+        viewNavTakeNewNote = findViewById(R.id.main_nav_takenewnote);
+        viewNavTakeNewNote.setOnClickListener(this);
+
+        viewNavNote = findViewById(R.id.main_nav_note);
+        viewNavNoteIcon = findViewById(R.id.main_nav_note_icon);
+        viewNavNoteText = findViewById(R.id.main_nav_note_text);
+        viewNavNote.setOnClickListener(this);
+
+        viewNavMe = findViewById(R.id.main_nav_me);
+        viewNavMeIcon = findViewById(R.id.main_nav_me_icon);
+        viewNavMeText = findViewById(R.id.main_nav_me_text);
+        viewNavMe.setOnClickListener(this);
+
 
         initFragment();
     }
@@ -98,6 +105,7 @@ public class ActivityMain extends NFragmentActivity implements View.OnClickListe
         FragmentTransaction transaction =fm.beginTransaction();
         hideFragment(transaction);
         resetNav();
+        lightNav(id);
         switch (id){
             case 0:
                 if(fragmentNote==null){
@@ -107,8 +115,11 @@ public class ActivityMain extends NFragmentActivity implements View.OnClickListe
                 transaction.show(fragmentNote);
                 break;
             case 1:
-                break;
-            case 2:
+                if(fragmentMe==null){
+                    fragmentMe=new FragmentMeMain();
+                    transaction.add(R.id.main_fragment,fragmentMe);
+                }
+                transaction.show(fragmentMe);
                 break;
             default:
                 break;
@@ -116,9 +127,26 @@ public class ActivityMain extends NFragmentActivity implements View.OnClickListe
         transaction.commit();
     }
     private void resetNav(){
-
-
+        int colorDefault = getResources().getColor(R.color.colorFontNav);
+        viewNavNoteIcon.setTextColor(colorDefault);
+        viewNavNoteText.setTextColor(colorDefault);
+        viewNavMeIcon.setTextColor(colorDefault);
+        viewNavMeText.setTextColor(colorDefault);
     }
+    private void lightNav(int id){
+        int colorLight = getResources().getColor(R.color.colorFontNavLight);
+        switch (id){
+            case 0:
+                viewNavNoteIcon.setTextColor(colorLight);
+                viewNavNoteText.setTextColor(colorLight);
+                break;
+            case 1:
+                viewNavMeIcon.setTextColor(colorLight);
+                viewNavMeText.setTextColor(colorLight);
+                break;
+        }
+    }
+
     private void hideFragment(android.support.v4.app.FragmentTransaction transaction){
         if(fragmentNote!=null){
             transaction.hide(fragmentNote);
@@ -131,9 +159,14 @@ public class ActivityMain extends NFragmentActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.main_button_takenewnote:
-
+            case R.id.main_nav_note:
+                if(position!=0)setNav(0);
+                break;
+            case R.id.main_nav_takenewnote:
                 requestCamera();
+                break;
+            case R.id.main_nav_me:
+                if(position!=1)setNav(1);
                 break;
         }
     }
@@ -223,7 +256,7 @@ public class ActivityMain extends NFragmentActivity implements View.OnClickListe
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-        Debug.Log(image.getAbsolutePath());
+        Debug.log(image.getAbsolutePath());
         return image;
     }
 }

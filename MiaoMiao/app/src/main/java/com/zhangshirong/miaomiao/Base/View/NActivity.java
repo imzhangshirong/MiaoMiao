@@ -3,9 +3,15 @@ package com.zhangshirong.miaomiao.Base.View;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Icon;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.zhangshirong.miaomiao.Base.Debug;
+import com.zhangshirong.miaomiao.MiaoMiao;
+import com.zhangshirong.miaomiao.R;
+import com.zhangshirong.miaomiao.Widget.Iconfont;
 
 import java.util.HashMap;
 
@@ -21,8 +27,9 @@ public class NActivity extends Activity {
     protected void onStart() {
         activityMap.put(this.getClass(),this);
         this.context = getBaseContext();
+        View view = ((ViewGroup)findViewById(android.R.id.content)).getChildAt(0);
+        Iconfont.apply(view, MiaoMiao.iconfont);
         super.onStart();
-
     }
 
     public void startActivity(Class activity){

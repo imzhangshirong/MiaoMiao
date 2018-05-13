@@ -4,6 +4,10 @@
     <string name="app_package">com.zhangshirong.miaomiao</string>
     <string name="permission_denied">获取权限失败</string>
 
+
+    <string name="nav_note">&#xe6a1;</string>
+    <string name="nav_me">&#xe6a2;</string>
+
     <string name="login_nav_title">登录描喵</string>
     <string name="login_nav_button_register">去注册</string>
     <string name="login_input_username_digits">abcdefghijklmnopqrstuvwxyz0123456789_.@</string>
@@ -26,4 +30,6 @@
     <string name="main_note_pager_miao">喵</string>
     <string name="main_note_pager_note">我的笔记</string>
     <string name="main_note_pager_test">我的测试</string>
+
+    <string name="main_note_miao_daytext">当你下定决定出发时，最困难的时刻就已经过去了。</string>
 </resources>

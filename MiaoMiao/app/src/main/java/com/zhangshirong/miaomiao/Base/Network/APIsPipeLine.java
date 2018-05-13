@@ -34,7 +34,7 @@ public class APIsPipeLine {
 
     public APIsDataObject requestSync(String APIUrl,APIsRequestBuilder urlData,APIsRequestBuilder formData){
         String url=urlData.buildGetURL(APIUrl);
-        Debug.Log(url);
+        Debug.log(url);
         APIsDataObject apiData = new APIsDataObject();
         OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(Config.API_CONNECT_TIMEOUT, TimeUnit.MILLISECONDS)
@@ -51,7 +51,7 @@ public class APIsPipeLine {
                 case 301:
                     apiData.session = response.header("session");
                     String data=response.body().string();
-                    Debug.Log(data);
+                    Debug.log(data);
                     JSONObject jsonData = new JSONObject(data);
                     apiData.code = jsonData.getInt("code");
                     apiData.message = jsonData.getString("msg");
@@ -63,7 +63,7 @@ public class APIsPipeLine {
             }
 
         } catch (IOException e) {
-            Debug.Error(e.getMessage());
+            Debug.error(e.getMessage());
             e.printStackTrace();
         }
         finally {
@@ -74,7 +74,7 @@ public class APIsPipeLine {
 
     public void requestAsync(String APIUrl,final APIsRsponse apiCallBack, APIsRequestBuilder urlData, APIsRequestBuilder formData){
         final String url=urlData.buildGetURL(APIUrl);
-        Debug.Log(url);
+        Debug.log(url);
         final APIsDataObject apiData = new APIsDataObject();
         OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(Config.API_CONNECT_TIMEOUT, TimeUnit.MILLISECONDS)
@@ -98,7 +98,7 @@ public class APIsPipeLine {
             public void onResponse(Call call, Response response) throws IOException {
                 apiData.session = response.header("session");
                 String data=response.body().string();
-                Debug.Log(data);
+                Debug.log(data);
                 JSONObject jsonData = null;
                 try {
                     jsonData = new JSONObject(data);
@@ -107,7 +107,7 @@ public class APIsPipeLine {
                     apiData.jsonData = jsonData;
                 } catch (JSONException e) {
                     apiData.code = -2;
-                    Debug.Error(e.getMessage());
+                    Debug.error(e.getMessage());
                     e.printStackTrace();
                 }
                 if(apiData.code!=0){
