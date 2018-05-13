@@ -71,7 +71,7 @@ public class Common {
     public static final int PERMISSION_REQUEST_CAMERA = 2;
     static String[] mon = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
     public static String getMonthName(int month){
-        return mon[month-1];
+        return mon[month];
     }
 
     public static Camera getCameraInstance(){

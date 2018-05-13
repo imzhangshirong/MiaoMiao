@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="mainNoteBlockTestCountListCell"
+            type="com.zhangshirong.miaomiao.DataBinding.MainNoteIndexBlockTestListCellVM"/>
+    </data>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textColor="@color/colorFontLight"
+                android:text="@{mainNoteBlockTestCountListCell.name}"
+                android:textSize="16sp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textColor="@color/colorFontLight"
+                android:text="@{String.valueOf(mainNoteBlockTestCountListCell.percent)+'%'}"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:background="@null"
+            android:scrollbarThumbHorizontal="@null"
+            android:progress="@{mainNoteBlockTestCountListCell.percent}"
+            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+            android:progressDrawable="@drawable/progress_light"
+            android:layout_width="match_parent"
+            android:layout_height="6dp" />
+    </LinearLayout>
+</layout>

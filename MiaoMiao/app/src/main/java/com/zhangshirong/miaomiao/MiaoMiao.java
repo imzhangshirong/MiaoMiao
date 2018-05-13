@@ -12,6 +12,7 @@ import com.zhangshirong.miaomiao.DataObject.UserData;
 import com.zhangshirong.miaomiao.Proxy.APIsProxy;
 import com.zhangshirong.miaomiao.Proxy.LocalDataProxy;
 import com.zhangshirong.miaomiao.Proxy.NoteProxy;
+import com.zhangshirong.miaomiao.Proxy.TestProxy;
 import com.zhangshirong.miaomiao.Widget.Iconfont;
 
 import java.util.HashMap;
@@ -48,6 +49,7 @@ public class MiaoMiao extends Application {
         registerProxy(LocalDataProxy.class);
         registerProxy(APIsProxy.class);
         registerProxy(NoteProxy.class);
+        registerProxy(TestProxy.class);
     }
 
     void mockData(){
