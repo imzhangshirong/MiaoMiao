@@ -23,7 +23,7 @@ func (p *Router) AddHandle(path string,handle func(*api.ApiRequest,*api.ApiRespo
 	p.router.HandleFunc(path,func(writer http.ResponseWriter,request *http.Request){
 		resHeader := writer.Header()
 		apiRequest := api.ApiRequest{Request:request}
-		apiResponse := api.ApiResponse{Writer:writer,Header:&resHeader,HttpCode:0,ErrorCode:0,Message:"",Data:nil,JsonData:""}
+		apiResponse := api.ApiResponse{Writer:writer,Header:&resHeader,HttpCode:0,ErrorCode:0,Message:"",Data:nil,JsonData:"",BytesData:nil}
 		handle(&apiRequest,&apiResponse)
 		if apiResponse.HttpCode == 0 {
 			apiResponse.HttpCode = 502
@@ -34,7 +34,11 @@ func (p *Router) AddHandle(path string,handle func(*api.ApiRequest,*api.ApiRespo
 		}
 		apiResponse.BuildJsonData()
 		writer.WriteHeader(apiResponse.HttpCode)
-		writer.Write([]byte(apiResponse.JsonData))
+		if apiResponse.BytesData==nil{
+			writer.Write([]byte(apiResponse.JsonData))
+		}else if apiResponse.BytesData!=nil && apiResponse.BytesData.Len()>0{
+			writer.Write(apiResponse.BytesData.Bytes())
+		}
 	})
 }
 

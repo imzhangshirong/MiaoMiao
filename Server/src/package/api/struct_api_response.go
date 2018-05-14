@@ -1,6 +1,7 @@
 package api
 
 import(
+	"bytes"
 	"net/http"
 	"encoding/json"
 
@@ -15,6 +16,7 @@ type ApiResponse struct{
 	Message string
 	Data interface{}
 	JsonData string
+	BytesData *bytes.Buffer
 
 }
 

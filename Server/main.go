@@ -10,6 +10,7 @@ import (
 	debug "package/debug"
 
 	module_login "module/login"
+	module_register "module/register"
 )
 
 type UserData struct{
@@ -36,5 +37,6 @@ func main() {
 }
 
 func bindHandle(){
-	app.Router.AddHandle("/login",module_login.Login)
+	app.Router.AddHandle("/login",module_login.OnLogin)
+	app.Router.AddHandle("/register/captcha",module_register.OnCaptcha)
 }
