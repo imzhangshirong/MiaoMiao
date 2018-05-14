@@ -6,14 +6,37 @@
             name="mainNoteNotebookGridCell"
             type="com.zhangshirong.miaomiao.DataBinding.MainNoteNotebookGridCellVM"/>
     </data>
-    <LinearLayout
+    <com.dd.ShadowLayout
+        app:sl_shadowRadius="2dp"
+        app:sl_shadowColor="@color/colorShadow"
+        app:sl_dx="0dp"
+        app:sl_dy="0dp"
+        app:sl_cornerRadius="6dp"
         android:layout_width="match_parent"
-        android:layout_height="120dp">
-        <TextView
-            android:text="@{mainNoteNotebookGridCell.name}"
-            android:gravity="center"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:background="@drawable/cell_notebook"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+            android:layout_height="wrap_content">
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:scaleType="centerCrop"
+                android:src="@{mainNoteNotebookGridCell.cover}"
+                app:riv_corner_radius_top_left="6dp"
+                app:riv_corner_radius_top_right="6dp"
+                android:layout_width="match_parent"
+                android:layout_height="190dp" />
+            <TextView
+                android:textSize="14sp"
+                android:textColor="@color/colorFont"
+                android:layout_margin="12dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{mainNoteNotebookGridCell.name}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </com.dd.ShadowLayout>
+
 
 </layout>

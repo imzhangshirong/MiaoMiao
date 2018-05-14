@@ -20,4 +20,16 @@ public class NoteProxy extends NProxy {
     public ArrayList<NoteBook> getAllNoteBook(){
         return NoteData.noteBooks;
     }
+
+    public NoteBook getNoteBookById(long id){
+        NoteBook book = null;
+        for(int i=0;i<NoteData.noteBooks.size();i++){
+            NoteBook temp = NoteData.noteBooks.get(i);
+            if(temp.bookId == id){
+                book = temp;
+                break;
+            }
+        }
+        return book;
+    }
 }

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 public class NoteBook {
     public String name;
-    public int bookId;
+    public long bookId;
     public String coverImg;
-    public int createTime;
-    public int updateTime;
-    public int lastOpenTime;
+    public long createTime;
+    public long updateTime;
+    public long lastOpenTime;
     public int fillableCount;
     public ArrayList<NoteBookPage> pages = new ArrayList<NoteBookPage>();
 }

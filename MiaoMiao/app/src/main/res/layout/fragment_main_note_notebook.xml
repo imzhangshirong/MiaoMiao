@@ -14,6 +14,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <GridView
+                android:scrollbars="none"
+                android:clipToPadding="false"
+                android:padding="8dp"
+                android:listSelector="@android:color/transparent"
+                android:verticalSpacing="10dp"
+                android:horizontalSpacing="10dp"
                 app:adapter="@{mainNoteNotebookGridAdapter}"
                 android:numColumns="2"
                 android:layout_width="match_parent"

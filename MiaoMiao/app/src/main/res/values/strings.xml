@@ -31,5 +31,15 @@
     <string name="main_note_pager_note">我的笔记</string>
     <string name="main_note_pager_test">我的测试</string>
 
-    <string name="main_note_miao_daytext">当你下定决心出发时，最困难的时刻就已经过去了。</string>
+    <string name="main_note_index_daytext">当你下定决心出发时，最困难的时刻就已经过去了。</string>
+    <string name="main_note_index_notecout1">共</string>
+    <string name="main_note_index_notecout2">本笔记，</string>
+    <string name="main_note_index_notecout3">页</string>
+
+    <string name="main_note_test_detail11">页，</string>
+    <string name="main_note_test_detail12">个测试点，用时</string>
+    <string name="main_note_test_detail13">分钟</string>
+    <string name="main_note_test_percent">%</string>
+    <string name="main_note_test_score">分</string>
+
 </resources>

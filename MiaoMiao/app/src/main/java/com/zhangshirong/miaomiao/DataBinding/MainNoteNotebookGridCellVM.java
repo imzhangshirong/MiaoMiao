@@ -15,4 +15,9 @@ public class MainNoteNotebookGridCellVM extends ViewModel {
     public String getName(){
         return data.name;
     }
+
+    @Bindable
+    public String getCover(){
+        return data.coverImg;
+    }
 }

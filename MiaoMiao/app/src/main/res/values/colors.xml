@@ -12,6 +12,7 @@
     <color name="colorFontLight">#ffffff</color>
     <color name="colorFontLightPress">#88ffffff</color>
     <color name="colorFontInput">#313131</color>
+    <color name="colorFont">#666666</color>
     <color name="colorFontInputHint">#979797</color>
     <color name="colorFontNav">#b5b5b5</color>
     <color name="colorFontNavLight">#ffb129</color>
@@ -19,6 +20,7 @@
 
     <color name="colorInputField">#ffffff</color>
     <color name="colorInputFieldLine">#eaeaea</color>
+    <color name="colorDivider">#22000000</color>
     <color name="colorBackground">#efefef</color>
     <color name="colorNavBackground">#ffffff</color>
 
@@ -32,4 +34,6 @@
 
     <color name="colorProgressBackground">#11000000</color>
     <color name="colorProgressFrontground">#ffffff</color>
+
+    <color name="colorShadow">#11000000</color>
 </resources>

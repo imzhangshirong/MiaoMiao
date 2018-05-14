@@ -22,12 +22,14 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="60dp">
+
         <LinearLayout
             android:background="@color/colorNavBackground"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="56dp">
+
             <RelativeLayout
                 android:id="@+id/main_nav_note"
                 android:clickable="true"
@@ -91,6 +93,11 @@
                     android:layout_height="wrap_content" />
             </RelativeLayout>
         </LinearLayout>
+        <View
+            android:layout_marginTop="4dp"
+            android:background="@color/colorDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1px"/>
         <RelativeLayout
             android:id="@+id/main_nav_takenewnote"
             android:clickable="true"
@@ -111,5 +118,6 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp" />
         </RelativeLayout>
+
     </RelativeLayout>
 </RelativeLayout>

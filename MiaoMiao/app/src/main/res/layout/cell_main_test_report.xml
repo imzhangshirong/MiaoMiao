@@ -1,6 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="mainNoteTestReportListCell"
+            type="com.zhangshirong.miaomiao.DataBinding.MainNoteTestReportListCellVM"/>
+    </data>
+    <com.dd.ShadowLayout
+        app:sl_shadowRadius="2dp"
+        app:sl_shadowColor="@color/colorShadow"
+        app:sl_dx="0dp"
+        app:sl_dy="0dp"
+        app:sl_cornerRadius="6dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:background="@drawable/cell_testreport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:textColor="@color/colorFont"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:layout_marginBottom="8dp"
+                        android:textSize="20sp"
+                        android:text="@{mainNoteTestReportListCell.name}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:textColor="@color/colorFont"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textSize="14sp"
+                        android:text=
+                            "@{String.valueOf(mainNoteTestReportListCell.notePageCount)+@string/main_note_test_detail11+String.valueOf(mainNoteTestReportListCell.fillableBlockCount)+@string/main_note_test_detail12+String.valueOf(mainNoteTestReportListCell.timeUsed)+@string/main_note_test_detail13}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-</LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:textColor="@color/colorFont"
+                        android:text="@{mainNoteTestReportListCell.isCompleted ? String.valueOf(mainNoteTestReportListCell.score):String.valueOf(mainNoteTestReportListCell.percent)}"
+                        android:textSize="32sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:textColor="@color/colorFont"
+                        android:text="@{mainNoteTestReportListCell.isCompleted ? (@string/main_note_test_score):(@string/main_note_test_percent)}"
+                        android:textSize="24sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+            <View
+                android:background="@color/colorDivider"
+                android:layout_width="match_parent"
+                android:layout_height="1px"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_margin="16dp"
+                        android:gravity="center"
+                        android:text="重新测试"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <View
+                    android:background="@color/colorDivider"
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"/>
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_margin="16dp"
+                        android:gravity="center"
+                        android:text="测试详情"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </com.dd.ShadowLayout>
+
+
+</layout>

@@ -22,112 +22,69 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="10dp"
+                    android:padding="8dp"
                     android:orientation="vertical"
                     android:background="@color/colorBackground">
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:background="@drawable/block_daytext"
-                        android:padding="12dp"
-                        android:layout_marginBottom="10dp"
+                    <com.dd.ShadowLayout
+                        app:sl_shadowRadius="2dp"
+                        app:sl_shadowColor="@color/colorShadow"
+                        app:sl_dx="0dp"
+                        app:sl_dy="0dp"
+                        app:sl_cornerRadius="6dp"
+                        android:layout_marginBottom="8dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <LinearLayout
-                            android:layout_marginBottom="5dp"
+                            android:orientation="vertical"
+                            android:background="@drawable/block_daytext"
+                            android:padding="12dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:layout_marginBottom="5dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:layout_marginRight="5dp"
+                                    android:textStyle="bold"
+                                    android:text="@{String.valueOf(mainNoteIndexVM.day)}"
+                                    android:textSize="32sp"
+                                    android:textColor="@color/colorFontLight"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                                <TextView
+                                    android:text="@{mainNoteIndexVM.month}"
+                                    android:textSize="18sp"
+                                    android:textColor="@color/colorFontLight"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                            </LinearLayout>
                             <TextView
-                                android:layout_marginRight="5dp"
-                                android:textStyle="bold"
-                                android:text="@{String.valueOf(mainNoteIndexVM.day)}"
-                                android:textSize="32sp"
+                                android:textSize="12sp"
                                 android:textColor="@color/colorFontLight"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
-                            <TextView
-                                android:text="@{mainNoteIndexVM.month}"
-                                android:textSize="18sp"
-                                android:textColor="@color/colorFontLight"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
-                        </LinearLayout>
-                        <TextView
-                            android:textSize="12sp"
-                            android:textColor="@color/colorFontLight"
-                            android:text="@string/main_note_miao_daytext"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:background="@drawable/block_notecount"
-                        android:padding="12dp"
-                        android:gravity="bottom"
-                        android:layout_marginBottom="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <ImageView
-                            android:src="@drawable/main_note_block_notecount"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp" />
-                        <LinearLayout
-                            android:layout_weight="1"
-                            android:gravity="right"
-                            android:orientation="horizontal"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content">
-                            <TextView
-                                android:textSize="16sp"
-                                android:textColor="@color/colorFontLight"
-                                android:text="共"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
-                            <TextView
-                                android:layout_marginRight="5dp"
-                                android:layout_marginLeft="5dp"
-                                android:textSize="26sp"
-                                android:textColor="@color/colorFontLight"
-                                android:text="@{String.valueOf(mainNoteIndexVM.noteCount)}"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
-                            <TextView
-                                android:textSize="16sp"
-                                android:textColor="@color/colorFontLight"
-                                android:text="本笔记，"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
-                            <TextView
-                                android:layout_marginRight="5dp"
-                                android:layout_marginLeft="5dp"
-                                android:textSize="26sp"
-                                android:textColor="@color/colorFontLight"
-                                android:text="@{String.valueOf(mainNoteIndexVM.notePagesCount)}"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
-                            <TextView
-                                android:textSize="16sp"
-                                android:textColor="@color/colorFontLight"
-                                android:text="页"
+                                android:text="@string/main_note_index_daytext"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
                         </LinearLayout>
-
-                    </LinearLayout>
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:background="@drawable/block_testcount"
-                        android:padding="12dp"
-                        android:layout_marginBottom="10dp"
+                    </com.dd.ShadowLayout>
+                    <com.dd.ShadowLayout
+                        app:sl_shadowRadius="2dp"
+                        app:sl_shadowColor="@color/colorShadow"
+                        app:sl_dx="0dp"
+                        app:sl_dy="0dp"
+                        app:sl_cornerRadius="6dp"
+                        android:layout_marginBottom="8dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <LinearLayout
-                            android:layout_marginBottom="12dp"
                             android:orientation="horizontal"
+                            android:background="@drawable/block_notecount"
+                            android:padding="12dp"
                             android:gravity="bottom"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                             <ImageView
-                                android:src="@drawable/main_note_block_testcount"
+                                android:src="@drawable/main_note_block_notecount"
                                 android:layout_width="32dp"
                                 android:layout_height="32dp" />
                             <LinearLayout
@@ -139,7 +96,7 @@
                                 <TextView
                                     android:textSize="16sp"
                                     android:textColor="@color/colorFontLight"
-                                    android:text="最近测试"
+                                    android:text="@string/main_note_index_notecout1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
                                 <TextView
@@ -147,27 +104,98 @@
                                     android:layout_marginLeft="5dp"
                                     android:textSize="26sp"
                                     android:textColor="@color/colorFontLight"
-                                    android:text="78"
+                                    android:text="@{String.valueOf(mainNoteIndexVM.noteCount)}"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
                                 <TextView
                                     android:textSize="16sp"
                                     android:textColor="@color/colorFontLight"
-                                    android:text="分"
+                                    android:text="@string/main_note_index_notecout2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                                <TextView
+                                    android:layout_marginRight="5dp"
+                                    android:layout_marginLeft="5dp"
+                                    android:textSize="26sp"
+                                    android:textColor="@color/colorFontLight"
+                                    android:text="@{String.valueOf(mainNoteIndexVM.notePagesCount)}"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                                <TextView
+                                    android:textSize="16sp"
+                                    android:textColor="@color/colorFontLight"
+                                    android:text="@string/main_note_index_notecout3"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
                             </LinearLayout>
 
                         </LinearLayout>
-                        <com.zhangshirong.miaomiao.Widget.ListViewAutoHeight
-                            android:divider="@null"
-                            android:dividerHeight="10dp"
+                    </com.dd.ShadowLayout>
+                    <com.dd.ShadowLayout
+                        app:sl_shadowRadius="2dp"
+                        app:sl_shadowColor="@color/colorShadow"
+                        app:sl_dx="0dp"
+                        app:sl_dy="0dp"
+                        app:sl_cornerRadius="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:background="@drawable/block_testcount"
+                            android:padding="12dp"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:adapter="@{mainNoteBlockTestCountListAdapter}">
-                            
-                        </com.zhangshirong.miaomiao.Widget.ListViewAutoHeight>
-                    </LinearLayout>
+                            android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:layout_marginBottom="12dp"
+                                android:orientation="horizontal"
+                                android:gravity="bottom"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <ImageView
+                                    android:src="@drawable/main_note_block_testcount"
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp" />
+                                <LinearLayout
+                                    android:layout_weight="1"
+                                    android:gravity="right"
+                                    android:orientation="horizontal"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content">
+                                    <TextView
+                                        android:textSize="16sp"
+                                        android:textColor="@color/colorFontLight"
+                                        android:text="最近测试"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+                                    <TextView
+                                        android:layout_marginRight="5dp"
+                                        android:layout_marginLeft="5dp"
+                                        android:textSize="26sp"
+                                        android:textColor="@color/colorFontLight"
+                                        android:text="78"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+                                    <TextView
+                                        android:textSize="16sp"
+                                        android:textColor="@color/colorFontLight"
+                                        android:text="分"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+                                </LinearLayout>
+
+                            </LinearLayout>
+                            <com.zhangshirong.miaomiao.Widget.ListViewAutoHeight
+                                android:listSelector="@android:color/transparent"
+                                android:divider="@null"
+                                android:dividerHeight="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:adapter="@{mainNoteBlockTestCountListAdapter}">
+
+                            </com.zhangshirong.miaomiao.Widget.ListViewAutoHeight>
+                        </LinearLayout>
+                    </com.dd.ShadowLayout>
                 </LinearLayout>
             </ScrollView>
         </android.support.v4.widget.SwipeRefreshLayout>

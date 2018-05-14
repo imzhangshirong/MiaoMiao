@@ -32,6 +32,10 @@
 -keep interface com.squareup.picasso.** { *; }
 -dontwarn com.squareup.picasso.**
 
+-keep class com.github.dmytrodanylyk.shadow-layout.** { *; }
+-keep interface com.github.dmytrodanylyk.shadow-layout.** { *; }
+-dontwarn com.github.dmytrodanylyk.shadow-layout.**
+
 -keep class com.zhangshirong.miaomiao.DataBinding.** {*; }
 -keep interface com.zhangshirong.miaomiao.DataBinding.** { *; }
 -dontwarn com.zhangshirong.miaomiao.DataBinding.**
