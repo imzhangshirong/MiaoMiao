@@ -39,7 +39,7 @@ public class FragmentIndex extends NFragment {
     }
     void setDataBinding(){
         viewModel = new MainNoteIndexVM();
-        binding.setVariable(BR.mainNoteIndexVM,viewModel);
+        binding.setVariable(BR.mainNoteIndex,viewModel);
         ArrayList<TestResult> list = testProxy.getAllTestResult();
         ListAdapter<MainNoteIndexBlockTestListCellVM,TestResult> listAdapter = new ListAdapter<>(
                 getContext(),

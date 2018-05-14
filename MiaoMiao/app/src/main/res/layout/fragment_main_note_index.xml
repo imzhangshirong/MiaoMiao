@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable 
-            name="mainNoteIndexVM" 
+            name="mainNoteIndex" 
             type="com.zhangshirong.miaomiao.DataBinding.MainNoteIndexVM"/>
         <variable
             name="mainNoteBlockTestCountListAdapter"
@@ -47,13 +47,13 @@
                                 <TextView
                                     android:layout_marginRight="5dp"
                                     android:textStyle="bold"
-                                    android:text="@{String.valueOf(mainNoteIndexVM.day)}"
+                                    android:text="@{String.valueOf(mainNoteIndex.day)}"
                                     android:textSize="32sp"
                                     android:textColor="@color/colorFontLight"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
                                 <TextView
-                                    android:text="@{mainNoteIndexVM.month}"
+                                    android:text="@{mainNoteIndex.month}"
                                     android:textSize="18sp"
                                     android:textColor="@color/colorFontLight"
                                     android:layout_width="wrap_content"
@@ -104,7 +104,7 @@
                                     android:layout_marginLeft="5dp"
                                     android:textSize="26sp"
                                     android:textColor="@color/colorFontLight"
-                                    android:text="@{String.valueOf(mainNoteIndexVM.noteCount)}"
+                                    android:text="@{String.valueOf(mainNoteIndex.noteCount)}"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
                                 <TextView
@@ -118,13 +118,13 @@
                                     android:layout_marginLeft="5dp"
                                     android:textSize="26sp"
                                     android:textColor="@color/colorFontLight"
-                                    android:text="@{String.valueOf(mainNoteIndexVM.notePagesCount)}"
+                                    android:text="@{String.valueOf(mainNoteIndex.notePagesCount)}"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
                                 <TextView
                                     android:textSize="16sp"
                                     android:textColor="@color/colorFontLight"
-                                    android:text="@string/main_note_index_notecout3"
+                                    android:text="@string/main_note_index_notecout1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
                             </LinearLayout>

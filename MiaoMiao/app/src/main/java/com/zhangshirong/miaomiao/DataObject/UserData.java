@@ -9,10 +9,10 @@ public class UserData {
 
 
     public static void mockData(){
-        nickName = "KyArvis";
+        nickName = "咯咯哒的Jarvis";
         password = "123456";
         email = "345054597@qq.com";
         phone = "12345678901";
-        profileImg = "null";
+        profileImg = "http://192.168.1.249/MiaoMiao/photo.jpg";
     }
 }

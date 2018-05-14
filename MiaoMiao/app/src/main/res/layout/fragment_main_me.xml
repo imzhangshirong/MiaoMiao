@@ -1,42 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-    <LinearLayout
-        android:background="@color/colorPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/navHeaderHeight">
-        <LinearLayout
-            android:gravity="left"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="65dp">
-            <TextView
-                android:textSize="@dimen/navTextSize"
-                android:layout_marginRight="20dp"
-                android:text="@string/app_name"
-                android:textColor="@color/colorFontLight"
-                android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_marginTop="@dimen/navHeaderHeight"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="mainMe"
+            type="com.zhangshirong.miaomiao.DataBinding.MainMeVM"/>
+    </data>
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
-            android:gravity="center"
-            android:text="@string/app_name"
+        <LinearLayout
+            android:background="#fff"
+            android:paddingTop="230dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
-    <ImageView
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="0dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/logo"
-        android:layout_width="60dp"
-        android:layout_height="60dp" />
-</RelativeLayout>
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:clickable="true"
+                    android:textSize="14sp"
+                    android:padding="14dp"
+                    android:text="设置"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <View
+                    android:background="@color/colorDivider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"/>
+                <TextView
+                    android:clickable="true"
+                    android:textSize="14sp"
+                    android:padding="14dp"
+                    android:text="关于描喵"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <View
+                    android:background="@color/colorDivider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"/>
+                <TextView
+                    android:clickable="true"
+                    android:textSize="14sp"
+                    android:padding="14dp"
+                    android:text="退出账号"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:background="@color/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/navHeaderHeight">
+            <LinearLayout
+                android:gravity="left"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="65dp">
+                <TextView
+                    android:textSize="@dimen/navTextSize"
+                    android:layout_marginRight="20dp"
+                    android:text="@string/app_name"
+                    android:textColor="@color/colorFontLight"
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:background="@color/colorPrimary"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/navHeaderHeight"
+            android:layout_width="match_parent"
+            android:layout_height="180dp">
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:src="@{mainMe.profileImg}"
+                app:riv_corner_radius="48dp"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"
+                android:layout_width="96dp"
+                android:layout_height="96dp" />
+            <TextView
+                android:text="@{mainMe.nickname}"
+                android:textSize="16sp"
+                android:textColor="@color/colorFontLight"
+                android:layout_margin="20dp"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="0dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo"
+            android:layout_width="60dp"
+            android:layout_height="60dp" />
+    </RelativeLayout>
+</layout>
