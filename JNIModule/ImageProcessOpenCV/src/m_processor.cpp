@@ -475,8 +475,8 @@ Mat m_processor::getPerspectiveTransformMat(Mat &imgF, int threshold, int minLen
         tMat = getPerspectiveTransform(corSrc, corDst);
         Mat warp;
         cv::warpPerspective(paddingDst, warp, tMat, paddingDst.size(), cv::INTER_LINEAR);
-        namedWindow("PerspectiveTransform", CV_WINDOW_FREERATIO);
-        imshow("PerspectiveTransform", warp);
+        //namedWindow("PerspectiveTransform", CV_WINDOW_FREERATIO);
+        //imshow("PerspectiveTransform", warp);
     }
     else
     {

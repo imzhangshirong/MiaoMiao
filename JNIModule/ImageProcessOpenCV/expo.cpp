@@ -59,7 +59,7 @@ double filter_fft2(Mat mat, int r, int c, double value)
 
 int main(int argc, const char **argv)
 {
-    float scale = 0.8f;
+    float scale = 1.0f;
     int kernelSize = 48 * scale;
     int kernelSize2 = 33 * scale;
     int kernelSize3 = 13 * (1.2 + scale) / 2;
@@ -82,7 +82,7 @@ int main(int argc, const char **argv)
     Mat kernelEle4 = getStructuringElement(MORPH_ELLIPSE, Size(kernelSize4, kernelSize4));
     long __t = get_timestamp();
     //Read Image
-    Mat img = imread("input/img02.jpg", CV_LOAD_IMAGE_COLOR);
+    Mat img = imread("input/img01.jpg", CV_LOAD_IMAGE_COLOR);
     if (img.empty())
     {
         cout << "Error:LoadImageFailed" << endl;
@@ -180,17 +180,26 @@ int main(int argc, const char **argv)
     vector<Point2f> pcorsTrans;
     Mat prevMat = m_processor::getPerspectiveTransformMat(result, lineThreshold, minLength, gap, paddingCross,pcors,pcorsTrans,&poffset);
     Mat prevScaled;
+    Mat prevScaledImg;
     if(pcorsTrans.size()==4){
         Size paddingSize = Size((int)pcorsTrans[0].x,(int)pcorsTrans[0].y);
         prevScaled = m_processor::transPrevMat(wordEdge,prevMat,poffset,paddingSize);
-        imshow("prevScaled",prevScaled);
+        prevScaledImg = m_processor::transPrevMat(resizeImg,prevMat,poffset,paddingSize);
+        //imshow("prevScaled",prevScaled);
     }
     else{
         prevScaled = wordEdge;
+        prevScaledImg = resizeImg;
     }
+
+
+
+
+/////////////////////////////////////////Next Step!!!Clip TextBlock!/////////////////////////////////////////////////////////////////
+
+
     Mat pixelDistrt = Mat(Size(prevScaled.cols,prevScaled.rows),CV_8UC3,Scalar(0));
     float xHAver = 0;
-    float yHAver = 0;
     vector<int> xDistrt(prevScaled.cols,0);
     vector<int> yDistrt(prevScaled.rows,0);
     for(int i=0;i<prevScaled.cols;i++){
@@ -198,18 +207,50 @@ int main(int argc, const char **argv)
             if(prevScaled.at<double>(j,i)>0)xDistrt[i]++;
         }
         line(pixelDistrt,Point(i,0),Point(i,xDistrt[i]),Scalar(80,80,80),1);
+        //xHAver+=xDistrt[i];
     }
+    /*xHAver/=prevScaled.cols;
+    for(int i=0;i<prevScaled.cols;i++){
+        xDistrt[i]-=xHAver*0.1;
+        if(xDistrt[i]<0)xDistrt[i]=0;
+        line(pixelDistrt,Point(i,0),Point(i,xDistrt[i]),Scalar(80,80,80),1);
+    }*/
     vector<Vec3i> featuresX = m_processor::getCrestsData(xDistrt);
+    float xCAver = 0;
+    int nCAver = 0;
     for(int i=0;i<featuresX.size();i++){
         Vec3i v3i = featuresX[i];
         if(v3i[2]>0){
+            xCAver+=v3i[1];
+            nCAver++;
             line(pixelDistrt,Point(v3i[0],0),Point(v3i[0],v3i[1]),Scalar(0,0,255),1);
         }
         else{
             line(pixelDistrt,Point(v3i[0],0),Point(v3i[0],v3i[1]),Scalar(0,255,0),1);
         }
     }
-
+    xCAver/=nCAver;
+    Vec2i xBound;
+    for(int i=1;i<featuresX.size();i++){
+        Vec3i v3i = featuresX[i];
+        if(v3i[2]>0 && v3i[1]>xCAver*0.5){
+            int last = i-1;
+            if(featuresX[last][2]<0){
+                xBound[0]=featuresX[last][0];
+                break;
+            }
+        }
+    }
+    for(int i=featuresX.size()-2;i>=0;i--){
+        Vec3i v3i = featuresX[i];
+        if(v3i[2]>0 && v3i[1]>xCAver*0.5){
+            int next = i+1;
+            if(featuresX[next][2]<0){
+                xBound[1]=featuresX[next][0];
+                break;
+            }
+        }
+    }
     ///////////////////////////////////////////////////
     for(int i=0;i<yDistrt.size();i++){
         for(int j=0;j<prevScaled.cols;j++){
@@ -217,9 +258,23 @@ int main(int argc, const char **argv)
         }
         line(pixelDistrt,Point(0,i),Point(yDistrt[i],i),Scalar(80,80,80),1);
     }
+    vector<Mat> lineClips;
     vector<Vec3i> featuresY = m_processor::getCrestsData(yDistrt);
     for(int i=0;i<featuresY.size();i++){
         Vec3i v3i = featuresY[i];
+        int last = i-1;
+        int next = i+1;
+        if(last>=0 && next<featuresY.size()){
+            if(v3i[2]>0 && featuresY[last][2] < 0 && featuresY[next][2] < 0){
+                
+                Rect rect(xBound[0],featuresY[last][0],xBound[1]-xBound[0],featuresY[next][0]-featuresY[last][0]);
+                Mat sub = prevScaledImg(rect);
+                Mat line;
+                sub.copyTo(line);
+                lineClips.push_back(line);
+                rectangle(prevScaledImg,rect,Scalar(0,0,255),1);
+            }
+        }
         if(v3i[2]>0){
             line(pixelDistrt,Point(0,v3i[0]),Point(v3i[1],v3i[0]),Scalar(0,0,255),1);
         }
@@ -227,8 +282,13 @@ int main(int argc, const char **argv)
             line(pixelDistrt,Point(0,v3i[0]),Point(v3i[1],v3i[0]),Scalar(0,255,0),1);
         }
     }
-    cout<<"//////"<<endl;
+    namedWindow("pixelDistrt", CV_WINDOW_FREERATIO);
     imshow("pixelDistrt",pixelDistrt);
+    namedWindow("lineClicp", CV_WINDOW_FREERATIO);
+    imshow("lineClicp",prevScaledImg);
+    for(int i=0;i<1;i++){
+        imshow("line"+to_string(i),lineClips[i]);
+    }
     cout << "Spend Time:" << get_timestamp() - __t << "ms" << endl;
     waitKey(0);
     return 0;
