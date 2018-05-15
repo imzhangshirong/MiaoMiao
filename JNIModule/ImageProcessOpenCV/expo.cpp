@@ -82,7 +82,7 @@ int main(int argc, const char **argv)
     Mat kernelEle4 = getStructuringElement(MORPH_ELLIPSE, Size(kernelSize4, kernelSize4));
     long __t = get_timestamp();
     //Read Image
-    Mat img = imread("input/img07.jpg", CV_LOAD_IMAGE_COLOR);
+    Mat img = imread("input/img02.jpg", CV_LOAD_IMAGE_COLOR);
     if (img.empty())
     {
         cout << "Error:LoadImageFailed" << endl;
@@ -133,8 +133,8 @@ int main(int argc, const char **argv)
     dilate(wordEdgeDilated, wordEdgeDilated, kernelEle4);
     erode(wordEdgeDilated, wordEdgeDilated, kernelEle4);
     cout << "Spend Time:" << get_timestamp() - __t << "ms" << endl;
-    //namedWindow("WordEdgeDilated", CV_WINDOW_FREERATIO);
-    //imshow("WordEdgeDilated", wordEdgeDilated);
+    namedWindow("WordEdgeDilated", CV_WINDOW_FREERATIO);
+    imshow("WordEdgeDilated", wordEdgeDilated);
     //Words Rect Detect //https://docs.opencv.org/2.4/doc/tutorials/imgproc/shapedescriptors/bounding_rotated_ellipses/bounding_rotated_ellipses.html
     vector<vector<Point>> contours; //定义轮廓集合
     vector<Vec4i> hierarchy;
@@ -189,20 +189,45 @@ int main(int argc, const char **argv)
         prevScaled = wordEdge;
     }
     Mat pixelDistrt = Mat(Size(prevScaled.cols,prevScaled.rows),CV_8UC3,Scalar(0));
-    int xDistrt[prevScaled.cols] = {0};
-    int yDistrt[prevScaled.rows] = {0};
+    float xHAver = 0;
+    float yHAver = 0;
+    vector<int> xDistrt(prevScaled.cols,0);
+    vector<int> yDistrt(prevScaled.rows,0);
     for(int i=0;i<prevScaled.cols;i++){
         for(int j=0;j<prevScaled.rows;j++){
             if(prevScaled.at<double>(j,i)>0)xDistrt[i]++;
         }
-        line(pixelDistrt,Point(i,0),Point(i,xDistrt[i]),Scalar(255,255,0),1);
+        line(pixelDistrt,Point(i,0),Point(i,xDistrt[i]),Scalar(80,80,80),1);
     }
-    for(int i=0;i<prevScaled.rows;i++){
+    vector<Vec3i> featuresX = m_processor::getCrestsData(xDistrt);
+    for(int i=0;i<featuresX.size();i++){
+        Vec3i v3i = featuresX[i];
+        if(v3i[2]>0){
+            line(pixelDistrt,Point(v3i[0],0),Point(v3i[0],v3i[1]),Scalar(0,0,255),1);
+        }
+        else{
+            line(pixelDistrt,Point(v3i[0],0),Point(v3i[0],v3i[1]),Scalar(0,255,0),1);
+        }
+    }
+
+    ///////////////////////////////////////////////////
+    for(int i=0;i<yDistrt.size();i++){
         for(int j=0;j<prevScaled.cols;j++){
             if(prevScaled.at<double>(i,j)>0)yDistrt[i]++;
         }
-        line(pixelDistrt,Point(0,i),Point(yDistrt[i],i),Scalar(0,255,255),1);
+        line(pixelDistrt,Point(0,i),Point(yDistrt[i],i),Scalar(80,80,80),1);
     }
+    vector<Vec3i> featuresY = m_processor::getCrestsData(yDistrt);
+    for(int i=0;i<featuresY.size();i++){
+        Vec3i v3i = featuresY[i];
+        if(v3i[2]>0){
+            line(pixelDistrt,Point(0,v3i[0]),Point(v3i[1],v3i[0]),Scalar(0,0,255),1);
+        }
+        else{
+            line(pixelDistrt,Point(0,v3i[0]),Point(v3i[1],v3i[0]),Scalar(0,255,0),1);
+        }
+    }
+    cout<<"//////"<<endl;
     imshow("pixelDistrt",pixelDistrt);
     cout << "Spend Time:" << get_timestamp() - __t << "ms" << endl;
     waitKey(0);

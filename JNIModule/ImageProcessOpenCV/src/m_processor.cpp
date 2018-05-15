@@ -568,3 +568,146 @@ Mat m_processor::equalizeHist3C(Mat &mat)
     merge(splitBGR, mergeImg);
     return mergeImg;
 }
+
+vector<Vec3i> m_processor::getCrestsData(vector<int> &dist){
+    int distrtN = dist.size();
+    vector<int> distrtDefualt(dist);
+    vector<int> distrt(distrtN,0);
+    int kernelSizeD = 5;
+    int halfSize = kernelSizeD/2;
+    for(int k=0;k<5;k++){
+        for(int i=0;i<distrtN;i++){
+            int all = distrtDefualt[i];
+            int allN = 1;
+            for(int j=0;j<kernelSizeD;j++){
+                int l = i-halfSize+j;
+                if(l>=0 && l<distrtN && i!=l){
+                    all+=distrt[l];
+                    allN++;
+                }
+            }
+            distrt[i]=all/allN;
+        }
+        distrtDefualt = vector<int>(distrt);
+    }
+    
+    int lastMoutnV = 0;
+    int lastMoutnD = 0;
+    vector<Vec3i> features;
+    for(int i=0;i<distrtN;i++){
+        int value = distrt[i];
+        int moutD = (value-lastMoutnV);
+        if(moutD == 0){ //no
+            if(lastMoutnD >0){//crest
+                int j = i-1;
+                if(j>=0){
+                    Vec3i v3i;
+                    v3i[0] = j;
+                    v3i[1] = distrt[j];
+                    v3i[2] = 1;
+                    features.push_back(v3i);
+                }
+            }
+            else if(lastMoutnD<0){//trough
+                int j = i-1;
+                if(j>=0){
+                    Vec3i v3i;
+                    v3i[0] = j;
+                    v3i[1] = distrt[j];
+                    v3i[2] = -1;
+                    features.push_back(v3i);
+                }
+            }
+            else{
+
+            }
+        }
+        else if(moutD>0){ //up
+            if(lastMoutnD > 0){
+                
+            }
+            else if(lastMoutnD<0){//trough
+                int j = i-1;
+                if(j>=0){
+                    Vec3i v3i;
+                    v3i[0] = j;
+                    v3i[1] = distrt[j];
+                    v3i[2] = -1;
+                    features.push_back(v3i);
+                }
+            }
+            else{//trough
+                int j = i-1;
+                if(j>=0){
+                    Vec3i v3i;
+                    v3i[0] = j;
+                    v3i[1] = distrt[j];
+                    v3i[2] = -1;
+                    features.push_back(v3i);
+                }
+            }
+        }
+        else if(moutD<0){ //down
+            if(lastMoutnD > 0){//crest
+                int j = i-1;
+                if(j>=0){
+                    Vec3i v3i;
+                    v3i[0] = j;
+                    v3i[1] = distrt[j];
+                    v3i[2] = 1;
+                    features.push_back(v3i);     
+                }
+            }
+            else if(lastMoutnD<0){
+            }
+            else{//crest
+
+            }
+        }
+        lastMoutnV = value;
+        lastMoutnD = moutD;
+    }
+    
+    for(int i=0;i<features.size()-1;i++){
+        Vec3i v3i = features[i];
+        Vec3i v3i2 = features[i+1];
+        if(v3i[2]<0 && v3i2[2]<0){
+            if(v3i[1]>v3i2[1]){
+                features.erase(features.begin()+i,features.begin()+i+1);
+                i--;
+            }
+            else if(v3i[1]<v3i2[1])
+            {
+                features.erase(features.begin()+i+1,features.begin()+i+2);
+            }
+        }
+        if(v3i[2]>0 && v3i2[2]<0){
+            if(v3i[1]==v3i2[1])
+            {
+                features.erase(features.begin()+i,features.begin()+i+2);
+                i--;
+            }
+        }
+    }
+    Vec3i lastCrest;
+    int lastCrestI = -1;
+    for(int i=0;i<features.size();i++){
+        Vec3i v3i = features[i];
+        
+        if(v3i[2]>0){
+            if(v3i[0]-lastCrest[0]<5 && lastCrest[1]>0){
+                if(v3i[1]>lastCrest[1]){
+                    features.erase(features.begin()+lastCrestI,features.begin()+i);
+                }
+                else if(v3i[1]<lastCrest[1])
+                {
+                    features.erase(features.begin()+lastCrestI+1,features.begin()+i+1);
+                    i-=(i-lastCrestI);
+                }
+            }
+            lastCrestI = i;
+            lastCrest = features[i];
+        }
+    }
+    return features;
+}

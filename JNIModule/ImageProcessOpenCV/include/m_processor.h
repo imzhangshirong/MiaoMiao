@@ -21,5 +21,6 @@ class m_processor
     static float fft2HoughAngle(Mat &imgF);
     static double computePolygonArea(const vector<Point2d> &points);
     static Mat equalizeHist3C(Mat &mat);
+    static vector<Vec3i> getCrestsData(vector<int> &dist);
 };
 #endif
